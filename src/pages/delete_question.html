@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaPark — Excluir Perguntas</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0f14;--surface:#131820;--surface-2:#1a2030;--surface-3:#212840;
+  --border:rgba(255,255,255,0.07);--border-2:rgba(255,255,255,0.11);
+  --accent:#3b82f6;--accent-dim:rgba(59,130,246,0.10);
+  --text-1:#f0f4ff;--text-2:#8892a4;--text-3:#4a5568;
+  --green:#10b981;--red:#ef4444;--red-dim:rgba(239,68,68,0.08);
+  --amber:#f59e0b;--amber-dim:rgba(245,158,11,0.10);
+  --radius:10px;--radius-lg:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-1);
+  min-height:100vh;display:flex;align-items:flex-start;justify-content:center;
+  padding:40px 16px 64px;position:relative;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(59,130,246,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(59,130,246,0.025) 1px,transparent 1px);
+  background-size:48px 48px;pointer-events:none;
+}
+
+/* ── Card ── */
+.card{
+  position:relative;z-index:1;
+  width:100%;max-width:540px;
+  background:var(--surface);
+  border:1px solid var(--border-2);
+  border-radius:var(--radius-lg);
+  padding:36px 32px;
+  box-shadow:0 24px 64px rgba(0,0,0,0.6);
+  animation:slideUp .45s cubic-bezier(.22,.68,0,1) both;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Back link ── */
+.back-link{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:1rem;color:var(--text-3);
+  cursor:pointer;background:none;border:none;padding:0;
+  font-family:'DM Sans',sans-serif;margin-bottom:24px;
+  transition:color .2s;
+}
+.back-link:hover{color:var(--text-2);}
+
+/* ── Header ── */
+.card-header{margin-bottom:28px;}
+.card-header h2{
+  font-family:'Sora',sans-serif;
+  font-size:1.3rem;font-weight:700;color:var(--text-1);margin-bottom:4px;
+}
+.card-header p{font-size:.82rem;color:var(--text-2);font-weight:300;line-height:1.5;}
+
+.divider{height:1px;background:var(--border);margin:0 0 24px;}
+
+/* ── Warning indicator ── */
+.warn-indicator{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);
+  border-radius:var(--radius);padding:10px 13px;margin-bottom:20px;
+}
+.warn-dot{width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;}
+.warn-text{font-size:.78rem;color:rgba(252,165,165,.85);}
+.warn-text span{color:#fca5a5;font-family:'DM Mono',monospace;font-size:.76rem;font-weight:500;}
+
+/* ── Fields ── */
+.field{margin-bottom:20px;}
+label{
+  display:block;font-size:.7rem;font-weight:500;
+  letter-spacing:.8px;text-transform:uppercase;
+  color:var(--text-2);margin-bottom:6px;
+}
+.field-hint{font-size:.7rem;color:var(--text-3);margin-top:5px;font-family:'DM Mono',monospace;}
+
+select{
+  width:100%;background:var(--surface-2);
+  border:1px solid var(--border-2);border-radius:var(--radius);
+  padding:10px 32px 10px 13px;
+  font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text-1);
+  outline:none;cursor:pointer;
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%234a5568'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
+  transition:border-color .2s,box-shadow .2s;
+}
+select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
+select option{background:#131820;color:var(--text-1);}
+select option:disabled{color:var(--text-3);}
+
+/* ── Questions list ── */
+.questions-wrap{
+  display:none;
+  animation:fadeUp .3s ease both;
+}
+.questions-wrap.visible{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.questions-label{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;
+}
+.questions-label span{
+  font-size:.7rem;font-weight:500;letter-spacing:.8px;
+  text-transform:uppercase;color:var(--text-2);
+}
+.select-all-btn{
+  font-size:.72rem;color:var(--accent);
+  background:none;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-weight:500;
+  padding:0;transition:opacity .2s;
+}
+.select-all-btn:hover{opacity:.7;}
+
+/* Loading state */
+.q-loading{
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:28px;text-align:center;
+}
+.q-spinner{
+  display:inline-block;width:22px;height:22px;
+  border:2.5px solid var(--border-2);border-top-color:var(--accent);
+  border-radius:50%;animation:spin .7s linear infinite;margin-bottom:8px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.q-loading p{font-size:.8rem;color:var(--text-3);}
+
+/* Empty / error */
+.q-state{
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:24px;text-align:center;
+  font-size:.83rem;color:var(--text-3);
+}
+
+/* Question list */
+.q-list{
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;
+  max-height:320px;overflow-y:auto;
+}
+.q-list::-webkit-scrollbar{width:4px;}
+.q-list::-webkit-scrollbar-track{background:transparent;}
+.q-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
+
+.q-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:12px 14px;
+  border-bottom:1px solid var(--border);
+  transition:background .15s;cursor:pointer;
+}
+.q-item:last-child{border-bottom:none;}
+.q-item:hover{background:var(--surface-3);}
+.q-item.checked{background:rgba(239,68,68,.05);}
+
+/* Custom checkbox */
+.q-cb{
+  width:16px;height:16px;border-radius:4px;
+  border:1.5px solid var(--border-2);
+  background:var(--surface);
+  flex-shrink:0;margin-top:2px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;cursor:pointer;
+}
+.q-item.checked .q-cb{
+  background:var(--red);border-color:var(--red);
+}
+.q-cb-tick{
+  color:#fff;font-size:.65rem;font-weight:700;
+  display:none;line-height:1;
+}
+.q-item.checked .q-cb-tick{display:block;}
+
+.q-item-body{flex:1;min-width:0;}
+.q-item-header{
+  font-size:.67rem;font-weight:500;font-family:'DM Mono',monospace;
+  color:var(--text-3);letter-spacing:.5px;margin-bottom:3px;
+}
+.q-item-text{font-size:.83rem;color:var(--text-2);line-height:1.45;}
+.q-item.checked .q-item-text{color:rgba(252,165,165,.8);}
+
+/* Counter badge */
+.counter-badge{
+  display:none;
+  background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);
+  border-radius:20px;padding:3px 10px;
+  font-size:.7rem;font-weight:600;font-family:'DM Mono',monospace;
+  color:var(--red);margin-top:8px;
+}
+.counter-badge.visible{display:inline-flex;align-items:center;gap:5px;}
+
+/* ── Buttons row ── */
+.btn-row{
+  display:flex;gap:10px;margin-top:20px;
+}
+.btn-cancel{
+  flex:1;padding:11px;
+  background:transparent;border:1px solid var(--border-2);
+  border-radius:var(--radius);color:var(--text-2);
+  font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;
+  cursor:pointer;transition:all .18s;
+}
+.btn-cancel:hover{border-color:rgba(255,255,255,.2);color:var(--text-1);}
+
+.btn-delete{
+  flex:2;padding:11px;
+  background:var(--red);border:none;border-radius:var(--radius);
+  font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;
+  color:#fff;cursor:pointer;transition:opacity .2s,transform .15s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-delete:hover{opacity:.88;}
+.btn-delete:active{transform:scale(.98);}
+.btn-delete:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+
+.btn-spinner{
+  display:none;width:14px;height:14px;
+  border:2px solid rgba(255,255,255,.3);border-top-color:#fff;
+  border-radius:50%;animation:spin .6s linear infinite;
+}
+.btn-delete.loading .btn-spinner{display:inline-block;}
+
+/* ── Messages ── */
+.msg{
+  border-radius:var(--radius);padding:10px 13px;
+  font-size:.8rem;margin-top:14px;display:none;
+}
+.msg.error  {background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);color:#fca5a5;}
+.msg.success{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);color:#6ee7b7;}
+.msg.show{display:block;}
+
+@media(max-width:480px){
+  body{padding:24px 12px 48px;}
+  .card{padding:28px 18px;}
+  .btn-row{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+<script>
+  if(!localStorage.getItem('jwt_token'))window.location.href='index.html';
+  if(localStorage.getItem('user_role')!=='supervisor')window.location.href='dashboard.html';
+</script>
+
+<div class="card">
+  <button class="back-link" onclick="window.location.href='supervisor.html'">← Voltar ao painel</button>
+
+  <div class="card-header">
+    <h2>Excluir perguntas</h2>
+    <p>Selecione uma atração para visualizar suas perguntas, marque as que deseja remover e clique em excluir.</p>
+  </div>
+  <div class="divider"></div>
+
+
+  <!-- Dropdown de atração -->
+  <div class="field">
+    <label>Escolha a atração</label>
+    <select id="attraction-select" onchange="onAttractionChange()">
+      <option value="" disabled selected>Selecione uma atração...</option>
+      <option value="1">01 — Bóia Dupla</option>
+      <option value="2">02 — Rio Lento</option>
+      <option value="3">03 — Kids</option>
+      <option value="4">04 — Praia</option>
+      <option value="5">05 — Radicais</option>
+      <option value="6">06 — Moais</option>
+      <option value="7">07 — Octopus</option>
+      <option value="8">08 — Acquabar</option>
+    </select>
+  </div>
+
+  <!-- Lista de perguntas (aparece após escolher atração) -->
+  <div class="questions-wrap" id="questions-wrap">
+    <div class="questions-label">
+      <span id="questions-count-label">Perguntas</span>
+      <button class="select-all-btn" id="select-all-btn" onclick="toggleSelectAll()">Selecionar todas</button>
+    </div>
+
+    <div id="questions-container"></div>
+
+    <div class="counter-badge" id="counter-badge">
+      <span id="counter-num">0</span> pergunta(s) selecionada(s)
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-cancel" onclick="window.location.href='supervisor.html'">Cancelar</button>
+      <button class="btn-delete" id="btn-delete" onclick="deleteQuestions()">
+        <span class="btn-spinner"></span>
+        🗑 Excluir selecionadas
+      </button>
+    </div>
+
+    <div class="msg" id="msg"></div>
+  </div>
+</div>
+
+<script>
+const API_BASE = 'https://breathable-delma-claval.ngrok-free.dev';
+let allQuestions  = [];   // todas as perguntas carregadas
+let selectedIds   = new Set(); // question_ids marcados
+let allSelected   = false;
+
+function getToken() { return localStorage.getItem('jwt_token'); }
+
+// ── Chamado ao trocar a atração no dropdown ──
+async function onAttractionChange() {
+  const attractionId = document.getElementById('attraction-select').value;
+  if (!attractionId) return;
+
+  selectedIds.clear();
+  allSelected = false;
+  updateCounter();
+
+  const wrap = document.getElementById('questions-wrap');
+  const container = document.getElementById('questions-container');
+
+  wrap.classList.add('visible');
+  container.innerHTML = `
+    <div class="q-loading">
+      <div class="q-spinner"></div>
+      <p>Carregando perguntas...</p>
+    </div>`;
+
+  document.getElementById('msg').className = 'msg';
+
+  try {
+    const res = await fetch(
+      `${API_BASE}/getquestions?attraction=${attractionId}`,
+      { headers: { 'Authorization': 'Bearer ' + getToken() } }
+    );
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    allQuestions = await res.json();
+
+    if (!Array.isArray(allQuestions) || allQuestions.length === 0) {
+      container.innerHTML = `<div class="q-state">Nenhuma pergunta cadastrada para esta atração.</div>`;
+      document.getElementById('questions-count-label').textContent = 'Perguntas (0)';
+      return;
+    }
+
+    document.getElementById('questions-count-label').textContent =
+      `Perguntas (${allQuestions.length})`;
+
+    renderQuestions();
+
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = `
+      <div class="q-state" style="color:rgba(252,165,165,.8);">
+        Erro ao carregar perguntas: ${err.message}<br>
+        <button onclick="onAttractionChange()"
+          style="margin-top:10px;padding:5px 14px;background:var(--accent);
+            border:none;border-radius:7px;color:#fff;font-family:'DM Sans',sans-serif;
+            font-size:.78rem;cursor:pointer;">
+          Tentar novamente
+        </button>
+      </div>`;
+  }
+}
+
+// ── Renderiza a lista de perguntas com checkboxes ──
+function renderQuestions() {
+  const container = document.getElementById('questions-container');
+
+  container.innerHTML = `
+    <div class="q-list">
+      ${allQuestions.map(q => `
+        <div class="q-item${selectedIds.has(q.question_id) ? ' checked' : ''}"
+             id="qi-${q.question_id}"
+             onclick="toggleItem('${q.question_id}')">
+          <div class="q-cb">
+            <span class="q-cb-tick">✓</span>
+          </div>
+          <div class="q-item-body">
+            <div class="q-item-header">${escHtml(q.header_about_question || '—')}</div>
+            <div class="q-item-text">${escHtml(q.question)}</div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+
+  updateCounter();
+}
+
+// ── Toggle individual ──
+function toggleItem(question_id) {
+  if (selectedIds.has(question_id)) {
+    selectedIds.delete(question_id);
+  } else {
+    selectedIds.add(question_id);
+  }
+
+  // Atualiza visual do item
+  const item = document.getElementById('qi-' + question_id);
+  if (item) item.classList.toggle('checked', selectedIds.has(question_id));
+
+  // Sincroniza estado do botão "Selecionar todas"
+  allSelected = selectedIds.size === allQuestions.length;
+  document.getElementById('select-all-btn').textContent =
+    allSelected ? 'Desmarcar todas' : 'Selecionar todas';
+
+  updateCounter();
+}
+
+// ── Selecionar / desmarcar todas ──
+function toggleSelectAll() {
+  allSelected = !allSelected;
+
+  allQuestions.forEach(q => {
+    if (allSelected) {
+      selectedIds.add(q.question_id);
+    } else {
+      selectedIds.delete(q.question_id);
+    }
+    const item = document.getElementById('qi-' + q.question_id);
+    if (item) item.classList.toggle('checked', allSelected);
+  });
+
+  document.getElementById('select-all-btn').textContent =
+    allSelected ? 'Desmarcar todas' : 'Selecionar todas';
+
+  updateCounter();
+}
+
+// ── Atualiza badge contador e estado do botão excluir ──
+function updateCounter() {
+  const n = selectedIds.size;
+  const badge = document.getElementById('counter-badge');
+  const btn   = document.getElementById('btn-delete');
+
+  badge.classList.toggle('visible', n > 0);
+  document.getElementById('counter-num').textContent = n;
+
+  btn.disabled = n === 0;
+}
+
+// ── Excluir perguntas selecionadas ──
+async function deleteQuestions() {
+  if (selectedIds.size === 0) return;
+
+  const confirmed = confirm(
+    `Excluir ${selectedIds.size} pergunta(s) permanentemente?\n\nEssa ação não pode ser desfeita.`
+  );
+  if (!confirmed) return;
+
+  const btn = document.getElementById('btn-delete');
+  const msg = document.getElementById('msg');
+
+  btn.disabled = true;
+  btn.classList.add('loading');
+  msg.className = 'msg';
+
+  const question_ids = Array.from(selectedIds);
+
+  try {
+    const res = await fetch(`${API_BASE}/deleteQuestions`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + getToken()
+      },
+      body: JSON.stringify({ question_ids })
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (res.ok) {
+      msg.textContent = `${question_ids.length} pergunta(s) excluída(s) com sucesso. Redirecionando...`;
+      msg.className = 'msg success show';
+      setTimeout(() => window.location.href = 'supervisor.html', 1500);
+    } else {
+      msg.textContent = data.message || 'Erro ao excluir perguntas.';
+      msg.className = 'msg error show';
+      btn.disabled = false;
+      btn.classList.remove('loading');
+    }
+
+  } catch (err) {
+    msg.textContent = 'Erro de conexão com o servidor.';
+    msg.className = 'msg error show';
+    btn.disabled = false;
+    btn.classList.remove('loading');
+  }
+}
+
+function escHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Botão excluir começa desabilitado
+document.getElementById('btn-delete').disabled = true;
+</script>
+</body>
+</html>

@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaPark — Painel do Supervisor</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ocean: #0077b6;
+    --wave: #00b4d8;
+    --foam: #90e0ef;
+    --deep: #03045e;
+    --mid: #023e8a;
+    --white: #ffffff;
+    --coral: #f77f00;
+    --success: #00c48c;
+    --danger: #e63946;
+    --warn: #f4a261;
+    --card-bg: rgba(255,255,255,0.055);
+    --border: rgba(144,224,239,0.18);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(160deg, #03045e 0%, #023e8a 45%, #0077b6 100%);
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* ── Background bubbles ── */
+  .bg-bubble {
+    position: fixed; border-radius: 50%;
+    background: rgba(144,224,239,0.05);
+    border: 1px solid rgba(144,224,239,0.1);
+    animation: floatBubble linear infinite;
+    pointer-events: none; z-index: 0;
+  }
+  @keyframes floatBubble {
+    0% { transform: translateY(110vh); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 0.3; }
+    100% { transform: translateY(-10vh); opacity: 0; }
+  }
+
+  /* ── Header ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 36px;
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 200;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .header-brand {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .header-brand .icon { font-size: 1.8rem; filter: drop-shadow(0 0 12px rgba(0,180,216,0.7)); }
+  .header-brand h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem; letter-spacing: 4px;
+    text-shadow: 0 0 20px rgba(0,180,216,0.5);
+  }
+  .header-brand .role-badge {
+    background: linear-gradient(135deg, rgba(244,162,97,0.2), rgba(244,162,97,0.08));
+    border: 1px solid rgba(244,162,97,0.35);
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: var(--warn);
+    text-transform: uppercase;
+  }
+
+  .header-right { display: flex; align-items: center; gap: 10px; }
+  .header-user-info {
+    text-align: right;
+    font-size: 0.78rem;
+    color: var(--foam);
+    opacity: 0.7;
+  }
+  .header-user-info strong { display: block; color: var(--white); opacity: 1; font-size: 0.85rem; }
+
+  .btn-logout {
+    background: rgba(255,80,80,0.1);
+    border: 1px solid rgba(255,80,80,0.22);
+    border-radius: 10px;
+    padding: 8px 14px;
+    color: rgba(255,150,150,0.85);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700; font-size: 0.8rem;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-logout:hover { background: rgba(255,80,80,0.2); }
+
+  /* ── Container ── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+    position: relative; z-index: 1;
+  }
+
+  /* ── Stats row ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+    animation: fadeIn 0.5s ease both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .stat-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 20px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .stat-label {
+    font-size: 0.68rem; font-weight: 800;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--foam); opacity: 0.55;
+  }
+  .stat-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem; letter-spacing: 2px;
+    line-height: 1;
+  }
+  .stat-value.blue { color: var(--wave); text-shadow: 0 0 20px rgba(0,180,216,0.4); }
+  .stat-value.green { color: var(--success); text-shadow: 0 0 20px rgba(0,196,140,0.4); }
+  .stat-value.red { color: var(--danger); text-shadow: 0 0 20px rgba(230,57,70,0.4); }
+  .stat-value.orange { color: var(--warn); text-shadow: 0 0 20px rgba(244,162,97,0.4); }
+  .stat-sub { font-size: 0.72rem; color: rgba(255,255,255,0.35); }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+    animation: fadeIn 0.5s 0.1s ease both;
+  }
+
+  .toolbar-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem; letter-spacing: 3px;
+    color: var(--white);
+  }
+
+  .toolbar-filters {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+
+  .filter-select {
+    background: rgba(255,255,255,0.06);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 14px;
+    color: var(--white);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem; font-weight: 600;
+    outline: none; cursor: pointer;
+    transition: border-color 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(144,224,239,0.4)'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+  }
+  .filter-select:focus { border-color: var(--wave); }
+  .filter-select option { background: #023e8a; }
+
+  .search-wrap {
+    position: relative;
+  }
+  .search-input {
+    background: rgba(255,255,255,0.06);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 14px 8px 34px;
+    color: var(--white);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem;
+    outline: none;
+    width: 200px;
+    transition: border-color 0.2s, width 0.3s;
+  }
+  .search-input::placeholder { color: rgba(255,255,255,0.3); }
+  .search-input:focus { border-color: var(--wave); width: 240px; }
+  .search-icon {
+    position: absolute; left: 10px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.85rem; opacity: 0.4;
+    pointer-events: none;
+  }
+
+  /* ── Table wrapper ── */
+  .table-wrap {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+    animation: fadeIn 0.5s 0.15s ease both;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead tr {
+    background: rgba(0,0,0,0.2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    padding: 13px 18px;
+    text-align: left;
+    font-size: 0.67rem;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--foam);
+    opacity: 0.6;
+    white-space: nowrap;
+  }
+  th:first-child { padding-left: 22px; }
+
+  tbody tr {
+    border-bottom: 1px solid rgba(144,224,239,0.06);
+    cursor: pointer;
+    transition: background 0.18s, transform 0.18s;
+    animation: rowIn 0.4s ease both;
+  }
+
+  @keyframes rowIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  tbody tr:nth-child(1) { animation-delay: 0.05s; }
+  tbody tr:nth-child(2) { animation-delay: 0.10s; }
+  tbody tr:nth-child(3) { animation-delay: 0.15s; }
+  tbody tr:nth-child(4) { animation-delay: 0.20s; }
+  tbody tr:nth-child(5) { animation-delay: 0.25s; }
+
+  tbody tr:hover { background: rgba(0,180,216,0.07); }
+  tbody tr:last-child { border-bottom: none; }
+
+  td {
+    padding: 14px 18px;
+    font-size: 0.85rem;
+    vertical-align: middle;
+  }
+  td:first-child { padding-left: 22px; }
+
+  /* Cell: atração */
+  .attraction-cell {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .attr-icon {
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .attr-name { font-weight: 700; color: var(--white); font-size: 0.88rem; }
+
+  /* Cell: date */
+  .date-cell { color: rgba(255,255,255,0.7); font-size: 0.82rem; }
+  .date-cell .time { display: block; font-size: 0.72rem; color: rgba(255,255,255,0.35); margin-top: 1px; }
+
+  /* Cell: user */
+  .user-cell {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--wave), var(--ocean));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.72rem; font-weight: 800;
+    flex-shrink: 0;
+    color: var(--white);
+  }
+  .user-name { font-weight: 600; color: rgba(255,255,255,0.85); }
+
+  /* Cell: N count */
+  .n-count {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-weight: 800; font-size: 0.85rem;
+  }
+  .n-count.zero { color: var(--success); }
+  .n-count.low { color: var(--warn); }
+  .n-count.high { color: var(--danger); }
+  .n-pill {
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+  }
+  .n-pill.zero { background: rgba(0,196,140,0.15); color: var(--success); }
+  .n-pill.low  { background: rgba(244,162,97,0.15); color: var(--warn); }
+  .n-pill.high { background: rgba(230,57,70,0.15); color: var(--danger); }
+
+  /* Cell: status */
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem; font-weight: 800;
+    letter-spacing: 0.5px;
+  }
+  .status-badge.ok { background: rgba(0,196,140,0.12); color: var(--success); border: 1px solid rgba(0,196,140,0.25); }
+  .status-badge.pend { background: rgba(244,162,97,0.12); color: var(--warn); border: 1px solid rgba(244,162,97,0.25); }
+
+  /* Cell: action */
+  .action-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 6px 14px;
+    background: rgba(0,180,216,0.1);
+    border: 1px solid rgba(0,180,216,0.22);
+    border-radius: 8px;
+    color: var(--foam);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.75rem; font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .action-btn:hover { background: rgba(0,180,216,0.22); color: var(--white); }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: rgba(255,255,255,0.3);
+  }
+  .empty-state .icon { font-size: 3rem; margin-bottom: 12px; display: block; }
+  .empty-state p { font-size: 0.88rem; }
+
+  /* Pagination */
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 22px;
+    border-top: 1px solid var(--border);
+    background: rgba(0,0,0,0.12);
+    flex-wrap: wrap; gap: 10px;
+  }
+  .page-info { font-size: 0.75rem; color: rgba(255,255,255,0.35); }
+  .page-btns { display: flex; gap: 6px; }
+  .page-btn {
+    width: 30px; height: 30px;
+    border-radius: 7px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: rgba(255,255,255,0.6);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem; font-weight: 700;
+    cursor: pointer; transition: all 0.18s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .page-btn:hover { background: rgba(0,180,216,0.15); border-color: rgba(0,180,216,0.3); color: var(--white); }
+  .page-btn.active { background: var(--wave); border-color: var(--wave); color: var(--deep); }
+
+  @media (max-width: 900px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    header { padding: 12px 16px; }
+    .container { padding: 16px 12px 50px; }
+    table { min-width: 600px; }
+    .table-wrap { overflow-x: auto; }
+    th, td { padding: 12px 12px; }
+    .search-input { width: 150px; }
+    .search-input:focus { width: 180px; }
+  }
+  @media (max-width: 500px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .header-user-info { display: none; }
+    .toolbar-title { font-size: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<script>
+  // Auth + role check
+  const token = localStorage.getItem('jwt_token');
+  const role  = localStorage.getItem('user_role');
+  if (!token) window.location.href = 'index.html';
+  console.log("role ->", role)
+  // if (role !== 2) window.location.href = 'dashboard.html';
+
+  // Bubbles
+  for (let i = 0; i < 10; i++) {
+    const b = document.createElement('div');
+    b.className = 'bg-bubble';
+    const s = 8 + Math.random()*36;
+    b.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${12+Math.random()*14}s;animation-delay:${Math.random()*14}s;`;
+    document.body.appendChild(b);
+  }
+</script>
+
+<header>
+  <div class="header-brand">
+    <span class="icon">🌊</span>
+    <h1>ACQUAPARK</h1>
+    <span class="role-badge">Supervisor</span>
+  </div>
+  <div class="header-right">
+    <div class="header-user-info">
+      <strong id="supervisor-name">Supervisor</strong>
+      <span id="header-date"></span>
+    </div>
+    <button class="btn-logout" onclick="logout()">Sair</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Inspeções Hoje</div>
+      <div class="stat-value blue" id="stat-today">3</div>
+      <div class="stat-sub">checklists enviados</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Conformidade</div>
+      <div class="stat-value green" id="stat-ok">87%</div>
+      <div class="stat-sub">itens marcados S.</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Não Conformes</div>
+      <div class="stat-value red" id="stat-n">5</div>
+      <div class="stat-sub">respostas N. no total</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Atrações Ativas</div>
+      <div class="stat-value orange">1</div>
+      <div class="stat-sub">de 8 disponíveis</div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="toolbar-title">HISTÓRICO DE INSPEÇÕES</div>
+    <div class="toolbar-filters">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" type="text" placeholder="Buscar inspetor..." id="search-input" oninput="filterTable()">
+      </div>
+      <select class="filter-select" id="filter-attraction" onchange="filterTable()">
+        <option value="">Todas as atrações</option>
+        <option value="Bóia Dupla">Bóia Dupla</option>
+      </select>
+      <select class="filter-select" id="filter-status" onchange="filterTable()">
+        <option value="">Todos os status</option>
+        <option value="ok">Sem não conformes</option>
+        <option value="pend">Com não conformes</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Atração</th>
+          <th>Data da Inspeção</th>
+          <th>Inspetor</th>
+          <th>Respostas N.</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="table-body">
+        <!-- Rows injected by JS -->
+      </tbody>
+    </table>
+    <div class="pagination">
+      <div class="page-info" id="page-info">Mostrando 1–5 de 5 registros</div>
+      <div class="page-btns">
+        <button class="page-btn">‹</button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">›</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ── Date ──
+  (function() {
+    const now = new Date();
+    document.getElementById('header-date').textContent = now.toLocaleDateString('pt-BR');
+  })();
+
+  // ── Mock data — replace with real API calls ──
+  const RECORDS = [
+    {
+      id: 1,
+      attraction: 'Bóia Dupla',
+      attractionIcon: '🛟',
+      attractionColor: 'linear-gradient(135deg,#0096c7,#023e8a)',
+      date: '05/05/2026',
+      time: '07:42',
+      inspector: 'Carlos Mendes',
+      initials: 'CM',
+      nCount: 2,
+      status: 'pend',
+      page: 'boia_dupla_view.html?id=1'
+    },
+    {
+      id: 2,
+      attraction: 'Bóia Dupla',
+      attractionIcon: '🛟',
+      attractionColor: 'linear-gradient(135deg,#0096c7,#023e8a)',
+      date: '05/05/2026',
+      time: '08:10',
+      inspector: 'Ana Lima',
+      initials: 'AL',
+      nCount: 0,
+      status: 'ok',
+      page: 'boia_dupla_view.html?id=2'
+    },
+    {
+      id: 3,
+      attraction: 'Bóia Dupla',
+      attractionIcon: '🛟',
+      attractionColor: 'linear-gradient(135deg,#0096c7,#023e8a)',
+      date: '04/05/2026',
+      time: '07:55',
+      inspector: 'Rafael Costa',
+      initials: 'RC',
+      nCount: 3,
+      status: 'pend',
+      page: 'boia_dupla_view.html?id=3'
+    },
+    {
+      id: 4,
+      attraction: 'Bóia Dupla',
+      attractionIcon: '🛟',
+      attractionColor: 'linear-gradient(135deg,#0096c7,#023e8a)',
+      date: '03/05/2026',
+      time: '07:38',
+      inspector: 'Carlos Mendes',
+      initials: 'CM',
+      nCount: 0,
+      status: 'ok',
+      page: 'boia_dupla_view.html?id=4'
+    },
+    {
+      id: 5,
+      attraction: 'Bóia Dupla',
+      attractionIcon: '🛟',
+      attractionColor: 'linear-gradient(135deg,#0096c7,#023e8a)',
+      date: '02/05/2026',
+      time: '08:05',
+      inspector: 'Ana Lima',
+      initials: 'AL',
+      nCount: 0,
+      status: 'ok',
+      page: 'boia_dupla_view.html?id=5'
+    }
+  ];
+
+  let filteredRecords = [...RECORDS];
+
+  function nClass(n) {
+    if (n === 0) return 'zero';
+    if (n <= 2)  return 'low';
+    return 'high';
+  }
+
+  function renderTable(records) {
+    const tbody = document.getElementById('table-body');
+    if (records.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><span class="icon">📋</span><p>Nenhuma inspeção encontrada com os filtros aplicados.</p></div></td></tr>`;
+      document.getElementById('page-info').textContent = 'Nenhum registro';
+      return;
+    }
+    tbody.innerHTML = records.map((r, i) => `
+      <tr onclick="openRecord('${r.page}')" style="animation-delay:${0.04*i}s">
+        <td>
+          <div class="attraction-cell">
+            <div class="attr-icon" style="background:${r.attractionColor}">${r.attractionIcon}</div>
+            <span class="attr-name">${r.attraction}</span>
+          </div>
+        </td>
+        <td class="date-cell">
+          ${r.date}
+          <span class="time">${r.time}</span>
+        </td>
+        <td>
+          <div class="user-cell">
+            <div class="avatar">${r.initials}</div>
+            <span class="user-name">${r.inspector}</span>
+          </div>
+        </td>
+        <td>
+          <span class="n-count ${nClass(r.nCount)}">
+            <span class="n-pill ${nClass(r.nCount)}">${r.nCount} ${r.nCount === 1 ? 'item' : 'itens'}</span>
+          </span>
+        </td>
+        <td>
+          <span class="status-badge ${r.status}">
+            ${r.status === 'ok' ? '✔ Conforme' : '⚠ Pendências'}
+          </span>
+        </td>
+        <td>
+          <button class="action-btn" onclick="event.stopPropagation(); openRecord('${r.page}')">
+            👁 Ver
+          </button>
+        </td>
+      </tr>
+    `).join('');
+    document.getElementById('page-info').textContent = `Mostrando 1–${records.length} de ${records.length} registros`;
+  }
+
+  function filterTable() {
+    const search = document.getElementById('search-input').value.toLowerCase();
+    const attr   = document.getElementById('filter-attraction').value;
+    const status = document.getElementById('filter-status').value;
+
+    filteredRecords = RECORDS.filter(r => {
+      const matchSearch = r.inspector.toLowerCase().includes(search) || r.attraction.toLowerCase().includes(search);
+      const matchAttr   = !attr || r.attraction === attr;
+      const matchStatus = !status || r.status === status;
+      return matchSearch && matchAttr && matchStatus;
+    });
+    renderTable(filteredRecords);
+  }
+
+  function openRecord(page) {
+    window.location.href = page;
+  }
+
+  function logout() {
+    localStorage.removeItem('jwt_token');
+    localStorage.removeItem('user_role');
+    window.location.href = 'index.html';
+  }
+
+  // Initial render
+  renderTable(RECORDS);
+</script>
+</body>
+</html>

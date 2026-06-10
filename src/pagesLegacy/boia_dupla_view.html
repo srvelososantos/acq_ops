@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaPark — Visualização de Inspeção</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ocean: #0077b6;
+    --wave: #00b4d8;
+    --foam: #90e0ef;
+    --deep: #03045e;
+    --white: #ffffff;
+    --success: #00c48c;
+    --danger: #e63946;
+    --warn: #f4a261;
+    --card-bg: rgba(255,255,255,0.055);
+    --border: rgba(144,224,239,0.18);
+    --input-bg: rgba(255,255,255,0.04);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(160deg, #03045e 0%, #023e8a 45%, #0077b6 100%);
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  .bg-bubble {
+    position: fixed; border-radius: 50%;
+    background: rgba(144,224,239,0.05);
+    border: 1px solid rgba(144,224,239,0.1);
+    animation: floatBubble linear infinite;
+    pointer-events: none; z-index: 0;
+  }
+  @keyframes floatBubble {
+    0% { transform: translateY(110vh); opacity: 0; }
+    10% { opacity: 1; } 90% { opacity: 0.3; }
+    100% { transform: translateY(-10vh); opacity: 0; }
+  }
+
+  /* ── Header ── */
+  header {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px;
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 200;
+    gap: 12px; flex-wrap: wrap;
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .back-btn {
+    background: rgba(0,180,216,0.12);
+    border: 1px solid rgba(0,180,216,0.25);
+    border-radius: 10px; padding: 8px 14px;
+    color: var(--foam); font-family: 'Nunito', sans-serif;
+    font-weight: 700; font-size: 0.82rem;
+    cursor: pointer; transition: all 0.2s;
+    text-decoration: none;
+  }
+  .back-btn:hover { background: rgba(0,180,216,0.25); }
+
+  .header-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem; letter-spacing: 3px;
+    text-shadow: 0 0 20px rgba(0,180,216,0.5);
+  }
+
+  /* Read-only banner */
+  .readonly-banner {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(244,162,97,0.1);
+    border: 1px solid rgba(244,162,97,0.25);
+    border-radius: 10px; padding: 7px 14px;
+    font-size: 0.75rem; font-weight: 700;
+    color: var(--warn); letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  /* ── Container ── */
+  .container {
+    max-width: 860px; margin: 0 auto;
+    padding: 28px 20px 60px;
+    position: relative; z-index: 1;
+  }
+
+  /* ── Meta card ── */
+  .meta-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: 18px; padding: 20px 24px;
+    margin-bottom: 20px;
+    display: flex; align-items: flex-start;
+    justify-content: space-between; flex-wrap: wrap; gap: 16px;
+    animation: fadeIn 0.4s ease both;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .meta-left h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem; letter-spacing: 3px; color: var(--white);
+  }
+  .meta-chips {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;
+  }
+  .meta-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(0,180,216,0.1);
+    border: 1px solid rgba(0,180,216,0.2);
+    border-radius: 20px; padding: 4px 12px;
+    font-size: 0.74rem; font-weight: 700; color: var(--foam);
+  }
+
+  .meta-summary {
+    display: flex; gap: 14px; flex-wrap: wrap; align-items: center;
+  }
+  .summary-box {
+    text-align: center;
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px; padding: 10px 16px;
+    border: 1px solid rgba(255,255,255,0.06);
+    min-width: 70px;
+  }
+  .summary-box .val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem; letter-spacing: 2px; line-height: 1;
+  }
+  .summary-box .lbl { font-size: 0.62rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; opacity: 0.45; margin-top: 2px; }
+  .val.green { color: var(--success); }
+  .val.red   { color: var(--danger); }
+  .val.gray  { color: rgba(255,255,255,0.4); }
+
+  /* ── Legend panel ── */
+  .legend-btn {
+    background: rgba(244,162,97,0.12);
+    border: 1px solid rgba(244,162,97,0.25);
+    border-radius: 10px; padding: 8px 14px;
+    color: var(--warn); font-family: 'Nunito', sans-serif;
+    font-weight: 700; font-size: 0.78rem;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .legend-btn:hover { background: rgba(244,162,97,0.22); }
+
+  .legend-panel {
+    background: rgba(244,162,97,0.06);
+    border: 1px solid rgba(244,162,97,0.18);
+    border-radius: 16px; padding: 18px 22px;
+    margin-bottom: 18px; display: none;
+    animation: fadeIn 0.25s ease both;
+  }
+  .legend-panel.open { display: block; }
+  .legend-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.95rem; letter-spacing: 2px;
+    color: var(--warn); margin-bottom: 12px;
+  }
+  .legend-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(230px,1fr)); gap: 8px; }
+  .legend-item { display: flex; align-items: flex-start; gap: 9px; background: rgba(255,255,255,0.03); border-radius: 9px; padding: 9px 11px; }
+  .legend-icon-badge { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0; }
+  .badge-visual   { background: rgba(0,180,216,0.15); border: 1px solid rgba(0,180,216,0.25); }
+  .badge-physical { background: rgba(144,224,239,0.12); border: 1px solid rgba(144,224,239,0.2); }
+  .badge-sound    { background: rgba(100,200,100,0.12); border: 1px solid rgba(100,200,100,0.2); }
+  .badge-critical { background: rgba(230,57,70,0.15); border: 1px solid rgba(230,57,70,0.3); }
+  .legend-item-text { font-size: 0.78rem; line-height: 1.4; color: rgba(255,255,255,0.75); }
+  .legend-item-text strong { color: var(--foam); display: block; margin-bottom: 1px; }
+
+  /* ── Section card ── */
+  .section-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    margin-bottom: 14px; overflow: hidden;
+    animation: fadeIn 0.4s ease both;
+  }
+
+  .section-header {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    padding: 15px 22px; cursor: pointer;
+    user-select: none; transition: background 0.2s; gap: 10px;
+  }
+  .section-header:hover { background: rgba(0,180,216,0.06); }
+  .section-header-left { display: flex; align-items: center; gap: 12px; }
+  .section-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1rem;
+    color: var(--wave);
+    background: rgba(0,180,216,0.12); border: 1px solid rgba(0,180,216,0.22);
+    border-radius: 8px; padding: 2px 9px; letter-spacing: 1px; flex-shrink: 0;
+  }
+  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.05rem; letter-spacing: 2px; }
+  .chevron { font-size: 0.8rem; color: var(--foam); opacity: 0.5; transition: transform 0.3s; flex-shrink: 0; }
+  .section-card.expanded .chevron { transform: rotate(180deg); }
+  .section-body {
+    display: none; padding: 0 22px 18px;
+    border-top: 1px solid var(--border);
+  }
+  .section-card.expanded .section-body { display: block; }
+
+  /* Section answer summary badge */
+  .section-answers {
+    display: flex; gap: 5px; align-items: center;
+  }
+  .ans-mini {
+    padding: 2px 8px; border-radius: 20px;
+    font-size: 0.65rem; font-weight: 800; letter-spacing: 0.5px;
+  }
+  .ans-mini.s { background: rgba(0,196,140,0.15); color: var(--success); }
+  .ans-mini.n { background: rgba(230,57,70,0.15); color: var(--danger); }
+  .ans-mini.na { background: rgba(144,144,144,0.12); color: rgba(200,200,200,0.6); }
+
+  /* ── Question row ── */
+  .q-row {
+    padding: 13px 0;
+    border-bottom: 1px solid rgba(144,224,239,0.07);
+  }
+  .q-row:last-child { border-bottom: none; }
+
+  .q-top {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .q-label { display: flex; align-items: flex-start; gap: 8px; flex: 1; min-width: 180px; }
+  .q-type-badge {
+    width: 26px; height: 26px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; flex-shrink: 0; margin-top: 1px;
+  }
+  .q-text { font-size: 0.86rem; line-height: 1.5; color: rgba(255,255,255,0.8); }
+  .q-text .q-sub { display: block; font-size: 0.72rem; color: var(--foam); opacity: 0.5; margin-top: 2px; font-style: italic; }
+
+  /* Read-only answer chip */
+  .answer-chip {
+    display: inline-flex; align-items: center;
+    padding: 4px 14px; border-radius: 8px;
+    font-size: 0.75rem; font-weight: 800; letter-spacing: 0.5px;
+    flex-shrink: 0; margin-top: 1px;
+    cursor: default;
+  }
+  .answer-chip.sim { background: rgba(0,196,140,0.15); border: 1.5px solid rgba(0,196,140,0.35); color: var(--success); }
+  .answer-chip.nao { background: rgba(230,57,70,0.15); border: 1.5px solid rgba(230,57,70,0.35); color: var(--danger); }
+  .answer-chip.na  { background: rgba(144,144,144,0.1); border: 1.5px solid rgba(180,180,180,0.2); color: rgba(200,200,200,0.6); }
+  .answer-chip.sem { background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.25); }
+
+  /* Read-only obs */
+  .obs-readonly {
+    margin-top: 8px;
+    background: rgba(244,162,97,0.06);
+    border: 1px solid rgba(244,162,97,0.18);
+    border-radius: 9px; padding: 9px 12px;
+    font-size: 0.8rem; color: rgba(255,255,255,0.65);
+    line-height: 1.5;
+  }
+  .obs-readonly-label {
+    font-size: 0.65rem; font-weight: 800;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--warn); opacity: 0.7; margin-bottom: 3px;
+  }
+
+  .q-row.critical-row {
+    background: rgba(230,57,70,0.04);
+    border-radius: 10px; padding: 10px 10px;
+    margin: 3px -10px; border-bottom: none;
+  }
+  .q-row.critical-row + .q-row { border-top: 1px solid rgba(144,224,239,0.07); }
+
+  /* Final obs */
+  .final-obs {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px 20px; margin-top: 16px;
+  }
+  .final-obs-title { font-size: 0.72rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--foam); opacity: 0.65; margin-bottom: 4px; }
+  .final-obs-subtitle { font-size: 0.76rem; color: rgba(255,255,255,0.4); line-height: 1.5; margin-bottom: 10px; font-style: italic; }
+  .final-obs-content {
+    background: var(--input-bg); border: 1.5px solid rgba(144,224,239,0.1);
+    border-radius: 10px; padding: 10px 13px;
+    font-size: 0.85rem; color: rgba(255,255,255,0.55);
+    line-height: 1.5; min-height: 60px;
+    font-style: italic;
+  }
+
+  /* Print btn */
+  .print-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 20px;
+    background: rgba(0,180,216,0.1);
+    border: 1px solid rgba(0,180,216,0.22);
+    border-radius: 12px; color: var(--foam);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700; font-size: 0.83rem;
+    cursor: pointer; transition: all 0.18s;
+  }
+  .print-btn:hover { background: rgba(0,180,216,0.22); color: var(--white); }
+
+  .action-row { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+
+  @media (max-width: 600px) {
+    header { padding: 12px 14px; }
+    .container { padding: 14px 10px 50px; }
+    .section-header { padding: 13px 14px; }
+    .section-body { padding: 0 12px 14px; }
+    .q-top { flex-direction: column; gap: 7px; }
+    .answer-chip { align-self: flex-start; }
+  }
+
+  @media print {
+    header, .action-row, .legend-btn, .readonly-banner { display: none !important; }
+    body { background: white !important; color: black !important; }
+    .section-card { border: 1px solid #ccc !important; }
+    .section-card.expanded .section-body { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<script>
+  // Auth check
+  const token = localStorage.getItem('jwt_token');
+  const role  = localStorage.getItem('user_role');
+  if (!token) window.location.href = 'index.html';
+  //if (role !== 'supervisor') window.location.href = 'dashboard.html';
+
+  // Bubbles
+  for (let i = 0; i < 8; i++) {
+    const b = document.createElement('div'); b.className = 'bg-bubble';
+    const s = 8 + Math.random()*30;
+    b.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${12+Math.random()*14}s;animation-delay:${Math.random()*14}s;`;
+    document.body.appendChild(b);
+  }
+
+  // ── Simulated record data — replace with real API fetch by ?id ──
+  // In production: fetch(`/api/inspections/${id}`) then populate DOM
+  const MOCK_DATA = {
+    id: 1,
+    attraction: 'Bóia Dupla',
+    date: '05/05/2026',
+    time: '07:42',
+    inspector: 'Carlos Mendes',
+    answers: {
+      q1_1:'S', q1_2:'S', q1_3:'N',
+      q2_1:'S', q2_2:'S', q2_3:'S', q2_4:'N', q2_5:'S',
+      q3_1:'S', q3_2:'S', q3_3:'S', q3_4:'S',
+      q3_5:'S', q3_6:'S', q3_7:'S', q3_8:'S',
+      q3_9:'S', q3_10:'S',
+      q4_1:'S', q4_2:'S', q4_3:'S',
+      q5_1:'S', q5_2:'S', q5_3:'S', q5_4:'S'
+    },
+    observations: {
+      q1_3: 'Balança apresentou instabilidade na leitura. Técnico notificado.',
+      q2_4: 'Cabo com início de oxidação no ponto de fixação superior. Programado para revisão.'
+    },
+    finalObs: 'Inspeção realizada com atenção especial aos cabos de içamento. Solicitado agendamento de manutenção preventiva para esta semana.'
+  };
+</script>
+
+<header>
+  <div class="header-left">
+    <a href="supervisor.html" class="back-btn">← Voltar</a>
+    <div class="header-title">📋 Visualização de Inspeção</div>
+  </div>
+  <div class="readonly-banner">🔒 Somente Leitura</div>
+</header>
+
+<div class="container">
+
+  <!-- Meta card -->
+  <div class="meta-card">
+    <div class="meta-left">
+      <h2>LISTA DE INSPEÇÃO DIÁRIA — BÓIA DUPLA</h2>
+      <div class="meta-chips">
+        <span class="meta-chip">📅 <span id="view-date"></span></span>
+        <span class="meta-chip">🕐 <span id="view-time"></span></span>
+        <span class="meta-chip">👤 <span id="view-inspector"></span></span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-end;">
+      <button class="legend-btn" onclick="toggleLegend()">📋 Legenda</button>
+      <div class="meta-summary">
+        <div class="summary-box">
+          <div class="val green" id="count-s">—</div>
+          <div class="lbl">S.</div>
+        </div>
+        <div class="summary-box">
+          <div class="val red" id="count-n">—</div>
+          <div class="lbl">N.</div>
+        </div>
+        <div class="summary-box">
+          <div class="val gray" id="count-na">—</div>
+          <div class="lbl">N/A</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend-panel" id="legend-panel">
+    <div class="legend-title">LEGENDA</div>
+    <div class="legend-grid">
+      <div class="legend-item"><div class="legend-icon-badge badge-visual">👁️</div><div class="legend-item-text"><strong>Verificação Visual</strong>Checar visualmente a condição do item</div></div>
+      <div class="legend-item"><div class="legend-icon-badge badge-physical">👋</div><div class="legend-item-text"><strong>Verificação Física</strong>Checar fisicamente com a mão</div></div>
+      <div class="legend-item"><div class="legend-icon-badge badge-critical">⚠️</div><div class="legend-item-text"><strong>Nível Alto de Verificação</strong>Garantir que todos os campos foram preenchidos</div></div>
+      <div class="legend-item"><div class="legend-icon-badge" style="background:rgba(0,196,140,0.12);border:1px solid rgba(0,196,140,0.25);font-size:0.7rem;font-weight:800;color:#00c48c;font-family:'Nunito',sans-serif;">S.</div><div class="legend-item-text"><strong>SIM</strong>Item em conformidade</div></div>
+      <div class="legend-item"><div class="legend-icon-badge" style="background:rgba(230,57,70,0.12);border:1px solid rgba(230,57,70,0.25);font-size:0.7rem;font-weight:800;color:#e63946;font-family:'Nunito',sans-serif;">N.</div><div class="legend-item-text"><strong>NÃO</strong>Item não conforme ou com observação</div></div>
+      <div class="legend-item"><div class="legend-icon-badge" style="background:rgba(144,144,144,0.1);border:1px solid rgba(200,200,200,0.2);font-size:0.6rem;font-weight:800;color:rgba(200,200,200,0.7);font-family:'Nunito',sans-serif;">N/A</div><div class="legend-item-text"><strong>NÃO APLICÁVEL</strong>Item não se aplica</div></div>
+    </div>
+  </div>
+
+  <!-- ── SEÇÃO 1 ── -->
+  <div class="section-card" id="sec1">
+    <div class="section-header" onclick="toggleSection('sec1')">
+      <div class="section-header-left">
+        <span class="section-num">01</span>
+        <span class="section-title">ENTRADA DA ATRAÇÃO</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="section-answers" id="sec1-summary"></div>
+        <span class="chevron">▼</span>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="q-row" id="row-q1_1">
+        <div class="q-top">
+          <div class="q-label"><div class="q-type-badge badge-visual">👁️</div><div class="q-text">Boias: Todas as boias estão calibradas, sem furos e limpas?</div></div>
+          <div class="answer-chip" id="chip-q1_1"></div>
+        </div>
+      </div>
+      <div class="q-row" id="row-q1_2">
+        <div class="q-top">
+          <div class="q-label"><div class="q-type-badge badge-visual">👁️</div><div class="q-text">Placas: Regras e altura encontram-se instaladas e com informações visíveis?</div></div>
+          <div class="answer-chip" id="chip-q1_2"></div>
+        </div>
+      </div>
+      <div class="q-row critical-row" id="row-q1_3">
+        <div class="q-top">
+          <div class="q-label"><div class="q-type-badge badge-critical">⚠️</div><div class="q-text">Balança ligada</div></div>
+          <div class="answer-chip" id="chip-q1_3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SEÇÃO 2 ── -->
+  <div class="section-card" id="sec2">
+    <div class="section-header" onclick="toggleSection('sec2')">
+      <div class="section-header-left">
+        <span class="section-num">02</span>
+        <span class="section-title">ESCADAS E PLATAFORMA</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="section-answers" id="sec2-summary"></div>
+        <span class="chevron">▼</span>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="q-row" id="row-q2_1"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-physical">👋</div><div class="q-text">Degraus e guarda-corpos da escada e plataforma: Encontram-se fixos e firmes?</div></div><div class="answer-chip" id="chip-q2_1"></div></div></div>
+      <div class="q-row" id="row-q2_2"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-visual">👁️</div><div class="q-text">Sistema de içamento de boia: eixo de rotação segue sem travamento e está bem lubrificado?</div></div><div class="answer-chip" id="chip-q2_2"></div></div></div>
+      <div class="q-row" id="row-q2_3"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-physical">👋</div><div class="q-text">Sistema de içamento de boia: os botões encontram-se prontos para uso e sem irregularidade?</div></div><div class="answer-chip" id="chip-q2_3"></div></div></div>
+      <div class="q-row" id="row-q2_4"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-visual">👁️</div><div class="q-text">Sistema de içamento de boia: cabos encontram-se sem ferrugens e funcionam corretamente?</div></div><div class="answer-chip" id="chip-q2_4"></div></div></div>
+      <div class="q-row" id="row-q2_5"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-visual">👁️</div><div class="q-text">Placas: Régua de altura, regras e proibido acessórios: Encontram-se instaladas e com informações visíveis?<span class="q-sub">Torre</span></div></div><div class="answer-chip" id="chip-q2_5"></div></div></div>
+    </div>
+  </div>
+
+  <!-- ── SEÇÃO 3 ── -->
+  <div class="section-card" id="sec3">
+    <div class="section-header" onclick="toggleSection('sec3')">
+      <div class="section-header-left">
+        <span class="section-num">03</span>
+        <span class="section-title">ESCORREGADORES, ENTRADAS, PERCURSO E CHEGADA</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="section-answers" id="sec3-summary"></div>
+        <span class="chevron">▼</span>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="q-row" id="row-q3_1"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-physical">👋</div><div class="q-text">Entrada do escorregador PÊNDULO: Sem avarias, trincados, rachados ou pontas que possam machucar?</div></div><div class="answer-chip" id="chip-q3_1"></div></div></div>
+      <div class="q-row" id="row-q3_2"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-physical">👋</div><div class="q-text">Cinto de segurança: encontra-se em boas condições para o uso?</div></div><div class="answer-chip" id="chip-q3_2"></div></div></div>
+      <div class="q-row critical-row" id="row-q3_3"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-critical">⚠️</div><div class="q-text">Realizada checagem a seco do desembarque e percurso do escorregador PÊNDULO?</div></div><div class="answer-chip" id="chip-q3_3"></div></div></div>
+      <div class="q-row critical-row" id="row-q3_4"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-critical">⚠️</div><div class="q-text">Kit de primeiros socorros encontra-se pronto para uso de urgência e emergência?<span class="q-sub">PÊNDULO</span></div></div><div class="answer-chip" id="chip-q3_4"></div></div></div>
+      <div class="q-row" id="row-q3_5"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-physical">👋</div><div class="q-text">Entrada do escorregador ESFERA: Sem avarias, trincados, rachados ou pontas que possam machucar?</div></div><div class="answer-chip" id="chip-q3_5"></div></div></div>
+      <div class="q-row critical-row" id="row-q3_6"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-critical">⚠️</div><div class="q-text">Realizada checagem a seco do desembarque e percurso do escorregador ESFERA?</div></div><div class="answer-chip" id="chip-q3_6"></div></div></div>
+      <div class="q-row" id="row-q3_7"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-physical">👋</div><div class="q-text">Entrada do escorregador CORREDEIRA: Sem avarias, trincados, rachados ou pontas que possam machucar?</div></div><div class="answer-chip" id="chip-q3_7"></div></div></div>
+      <div class="q-row critical-row" id="row-q3_8"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-critical">⚠️</div><div class="q-text">Realizada checagem a seco do desembarque e percurso do escorregador CORREDEIRA?</div></div><div class="answer-chip" id="chip-q3_8"></div></div></div>
+      <div class="q-row" id="row-q3_9"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-physical">👋</div><div class="q-text">Entrada do escorregador CANOA: Sem avarias, trincados, rachados ou pontas que possam machucar?</div></div><div class="answer-chip" id="chip-q3_9"></div></div></div>
+      <div class="q-row critical-row" id="row-q3_10"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-critical">⚠️</div><div class="q-text">Realizada checagem a seco do desembarque e percurso do escorregador CANOA?</div></div><div class="answer-chip" id="chip-q3_10"></div></div></div>
+    </div>
+  </div>
+
+  <!-- ── SEÇÃO 4 ── -->
+  <div class="section-card" id="sec4">
+    <div class="section-header" onclick="toggleSection('sec4')">
+      <div class="section-header-left">
+        <span class="section-num">04</span>
+        <span class="section-title">ÁREA DE CIRCULAÇÃO</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="section-answers" id="sec4-summary"></div>
+        <span class="chevron">▼</span>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="q-row" id="row-q4_1"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-visual">👁️</div><div class="q-text">Piso: Área de circulação sem partes e pontas que possam machucar?</div></div><div class="answer-chip" id="chip-q4_1"></div></div></div>
+      <div class="q-row" id="row-q4_2"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-physical">👋</div><div class="q-text">As 3 calhas de chegada e grelhas encontram-se fixas e firmes?</div></div><div class="answer-chip" id="chip-q4_2"></div></div></div>
+      <div class="q-row critical-row" id="row-q4_3"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-critical">⚠️</div><div class="q-text">Kit de primeiros socorros encontra-se pronto para uso de urgência e emergência?<span class="q-sub">BÓIA DUPLA</span></div></div><div class="answer-chip" id="chip-q4_3"></div></div></div>
+    </div>
+  </div>
+
+  <!-- ── SEÇÃO 5 ── -->
+  <div class="section-card" id="sec5">
+    <div class="section-header" onclick="toggleSection('sec5')">
+      <div class="section-header-left">
+        <span class="section-num">05</span>
+        <span class="section-title">PRIMEIRA DESCIDA DO DIA</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="section-answers" id="sec5-summary"></div>
+        <span class="chevron">▼</span>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="q-row" id="row-q5_1"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-physical">👋</div><div class="q-text">Verificação — Escorregador: PÊNDULO<span class="q-sub">Primeira descida do dia</span></div></div><div class="answer-chip" id="chip-q5_1"></div></div></div>
+      <div class="q-row" id="row-q5_2"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-physical">👋</div><div class="q-text">Verificação — Escorregador: ESFERA<span class="q-sub">Primeira descida do dia</span></div></div><div class="answer-chip" id="chip-q5_2"></div></div></div>
+      <div class="q-row" id="row-q5_3"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-physical">👋</div><div class="q-text">Verificação — Escorregador: CORREDEIRA<span class="q-sub">Primeira descida do dia</span></div></div><div class="answer-chip" id="chip-q5_3"></div></div></div>
+      <div class="q-row" id="row-q5_4"><div class="q-top"><div class="q-label"><div class="q-type-badge badge-physical">👋</div><div class="q-text">Verificação — Escorregador: CANOA<span class="q-sub">Primeira descida do dia</span></div></div><div class="answer-chip" id="chip-q5_4"></div></div></div>
+
+      <div class="final-obs">
+        <div class="final-obs-title">Observações Adicionais</div>
+        <div class="final-obs-subtitle">Apontamento de itens observados que não se enquadram nos quesitos da Lista de Inspeção Diária específica deste brinquedo.</div>
+        <div class="final-obs-content" id="final-obs-content">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-row">
+    <button class="print-btn" onclick="window.print()">🖨 Imprimir</button>
+  </div>
+
+</div>
+
+<script>
+  function toggleSection(id) {
+    document.getElementById(id).classList.toggle('expanded');
+  }
+
+  function toggleLegend() {
+    document.getElementById('legend-panel').classList.toggle('open');
+  }
+
+  // ── Populate data ──
+  (function() {
+    const data = MOCK_DATA; // swap for real API response
+
+    document.getElementById('view-date').textContent      = data.date;
+    document.getElementById('view-time').textContent      = data.time;
+    document.getElementById('view-inspector').textContent = data.inspector;
+
+    const answerMap = data.answers;
+    const obsMap    = data.observations || {};
+    const allKeys   = Object.keys(answerMap);
+
+    let totalS = 0, totalN = 0, totalNA = 0;
+
+    // Map sections → answer keys
+    const sections = {
+      sec1: ['q1_1','q1_2','q1_3'],
+      sec2: ['q2_1','q2_2','q2_3','q2_4','q2_5'],
+      sec3: ['q3_1','q3_2','q3_3','q3_4','q3_5','q3_6','q3_7','q3_8','q3_9','q3_10'],
+      sec4: ['q4_1','q4_2','q4_3'],
+      sec5: ['q5_1','q5_2','q5_3','q5_4']
+    };
+
+    Object.entries(sections).forEach(([secId, keys]) => {
+      let sS=0, sN=0, sNA=0;
+      keys.forEach(key => {
+        const ans = answerMap[key] || '';
+        const chip = document.getElementById('chip-'+key);
+        if (!chip) return;
+
+        if (ans === 'S') {
+          chip.className = 'answer-chip sim'; chip.textContent = 'S. SIM'; sS++; totalS++;
+        } else if (ans === 'N') {
+          chip.className = 'answer-chip nao'; chip.textContent = 'N. NÃO'; sN++; totalN++;
+        } else if (ans === 'NA') {
+          chip.className = 'answer-chip na'; chip.textContent = 'N/A'; sNA++; totalNA++;
+        } else {
+          chip.className = 'answer-chip sem'; chip.textContent = '—';
+        }
+
+        // Observation
+        if (obsMap[key]) {
+          const row = document.getElementById('row-'+key);
+          if (row) {
+            const obsEl = document.createElement('div');
+            obsEl.className = 'obs-readonly';
+            obsEl.innerHTML = `<div class="obs-readonly-label">Observação</div>${obsMap[key]}`;
+            row.appendChild(obsEl);
+          }
+        }
+      });
+
+      // Section summary badges
+      const sumEl = document.getElementById(secId+'-summary');
+      if (sumEl) {
+        sumEl.innerHTML =
+          (sS  ? `<span class="ans-mini s">${sS} S.</span>` : '') +
+          (sN  ? `<span class="ans-mini n">${sN} N.</span>` : '') +
+          (sNA ? `<span class="ans-mini na">${sNA} N/A</span>` : '');
+      }
+    });
+
+    // Totals
+    document.getElementById('count-s').textContent  = totalS;
+    document.getElementById('count-n').textContent  = totalN;
+    document.getElementById('count-na').textContent = totalNA;
+
+    // Final obs
+    const fo = document.getElementById('final-obs-content');
+    fo.textContent = data.finalObs || '—';
+    if (!data.finalObs) fo.style.opacity = '0.3';
+  })();
+</script>
+</body>
+</html>

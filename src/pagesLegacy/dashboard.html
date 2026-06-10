@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaPark — Atrações</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ocean: #0077b6;
+    --wave: #00b4d8;
+    --foam: #90e0ef;
+    --sand: #fdf6ec;
+    --coral: #f77f00;
+    --deep: #03045e;
+    --white: #ffffff;
+    --locked: rgba(255,255,255,0.04);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(160deg, #03045e 0%, #023e8a 40%, #0077b6 100%);
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* Header */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    background: rgba(0,0,0,0.25);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(144,224,239,0.15);
+    position: sticky; top: 0; z-index: 100;
+  }
+
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header-logo span { font-size: 2rem; filter: drop-shadow(0 0 12px rgba(0,180,216,0.8)); }
+  .header-logo h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 4px;
+    color: var(--white);
+    text-shadow: 0 0 20px rgba(0,180,216,0.6);
+  }
+
+  .header-user {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .user-badge {
+    background: rgba(0,180,216,0.15);
+    border: 1px solid rgba(0,180,216,0.3);
+    border-radius: 30px;
+    padding: 8px 18px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--foam);
+    letter-spacing: 0.5px;
+  }
+
+  .btn-logout {
+    background: rgba(255,80,80,0.12);
+    border: 1px solid rgba(255,80,80,0.25);
+    border-radius: 10px;
+    padding: 8px 16px;
+    color: rgba(255,150,150,0.9);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-logout:hover { background: rgba(255,80,80,0.22); border-color: rgba(255,80,80,0.5); }
+
+  /* Hero banner */
+  .hero {
+    text-align: center;
+    padding: 48px 24px 20px;
+    position: relative;
+  }
+  .hero h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.8rem);
+    letter-spacing: 5px;
+    color: var(--white);
+    text-shadow: 0 0 40px rgba(0,180,216,0.5);
+  }
+  .hero p {
+    color: var(--foam);
+    opacity: 0.7;
+    font-size: 0.9rem;
+    margin-top: 8px;
+    letter-spacing: 1px;
+  }
+
+  /* Wave divider */
+  .wave-divider {
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+    margin-top: -2px;
+  }
+  .wave-divider svg { display: block; width: 100%; height: 50px; }
+
+  /* Grid */
+  .grid-section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 24px 60px;
+  }
+
+  .attraction-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  @media (max-width: 900px) {
+    .attraction-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    header { padding: 16px 20px; }
+  }
+  @media (max-width: 480px) {
+    .attraction-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .header-logo h1 { font-size: 1.3rem; }
+    .user-badge { display: none; }
+  }
+
+  /* Cards */
+  .attraction-card {
+    border-radius: 20px;
+    overflow: hidden;
+    transition: transform 0.25s, box-shadow 0.25s;
+    position: relative;
+    animation: cardIn 0.5s cubic-bezier(.22,.68,0,1.2) both;
+  }
+
+  .attraction-card:nth-child(1) { animation-delay: 0.05s; }
+  .attraction-card:nth-child(2) { animation-delay: 0.10s; }
+  .attraction-card:nth-child(3) { animation-delay: 0.15s; }
+  .attraction-card:nth-child(4) { animation-delay: 0.20s; }
+  .attraction-card:nth-child(5) { animation-delay: 0.25s; }
+  .attraction-card:nth-child(6) { animation-delay: 0.30s; }
+  .attraction-card:nth-child(7) { animation-delay: 0.35s; }
+  .attraction-card:nth-child(8) { animation-delay: 0.40s; }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(30px) scale(0.93); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* ACTIVE card */
+  .attraction-card.active {
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(0,180,216,0.3);
+    border: 2px solid rgba(0,180,216,0.45);
+  }
+  .attraction-card.active:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 18px 48px rgba(0,180,216,0.5);
+  }
+  .attraction-card.active:hover .card-inner { filter: brightness(1.08); }
+
+  /* LOCKED card */
+  .attraction-card.locked {
+    cursor: not-allowed;
+    border: 2px solid rgba(255,255,255,0.06);
+    box-shadow: none;
+  }
+  .attraction-card.locked .card-inner {
+    filter: grayscale(0.7) brightness(0.6);
+  }
+
+  .card-inner {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(8px);
+    transition: filter 0.3s;
+  }
+
+  .card-img {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Individual card backgrounds */
+  .bg-1 { background: linear-gradient(145deg, #0096c7, #023e8a); }
+  .bg-2 { background: linear-gradient(145deg, #2d6a4f, #1b4332); }
+  .bg-3 { background: linear-gradient(145deg, #f48c06, #dc2f02); }
+  .bg-4 { background: linear-gradient(145deg, #f9c74f, #f3722c); }
+  .bg-5 { background: linear-gradient(145deg, #d62828, #6a0572); }
+  .bg-6 { background: linear-gradient(145deg, #4cc9f0, #7209b7); }
+  .bg-7 { background: linear-gradient(145deg, #3a0ca3, #023e8a); }
+  .bg-8 { background: linear-gradient(145deg, #f77f00, #d62828); }
+
+  .card-img span {
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+    transition: transform 0.3s;
+    position: relative; z-index: 1;
+  }
+  .attraction-card.active:hover .card-img span {
+    transform: scale(1.15) rotate(-3deg);
+  }
+
+  /* Shine effect on active */
+  .card-img::after {
+    content: '';
+    position: absolute;
+    top: -60%; left: -60%;
+    width: 220%; height: 220%;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .card-label {
+    padding: 14px 10px 16px;
+    text-align: center;
+  }
+
+  .card-number {
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.5;
+    display: block;
+    margin-bottom: 3px;
+  }
+
+  .card-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    color: var(--white);
+  }
+
+  .lock-icon {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    width: 28px; height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    z-index: 5;
+  }
+
+  .active-badge {
+    position: absolute;
+    top: 10px; left: 10px;
+    background: linear-gradient(135deg, #00c48c, #00a870);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #fff;
+    text-transform: uppercase;
+    z-index: 5;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(0,196,140,0.4); }
+    50% { box-shadow: 0 0 0 6px rgba(0,196,140,0); }
+  }
+
+  /* Coming soon tooltip */
+  .attraction-card.locked:hover::after {
+    content: 'Em breve!';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-4px);
+    background: rgba(0,0,0,0.8);
+    color: var(--foam);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 8px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 20;
+  }
+
+  /* Floating bubbles */
+  .bg-bubble {
+    position: fixed;
+    border-radius: 50%;
+    background: rgba(144,224,239,0.06);
+    border: 1px solid rgba(144,224,239,0.12);
+    animation: floatUp linear infinite;
+    pointer-events: none; z-index: 0;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(110vh); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 0.4; }
+    100% { transform: translateY(-10vh); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<script>
+  // Check auth
+  if (!localStorage.getItem('jwt_token')) {
+    window.location.href = 'index.html';
+  }
+
+  // Bubbles
+  (function() {
+    for (let i = 0; i < 12; i++) {
+      const b = document.createElement('div');
+      b.className = 'bg-bubble';
+      const s = 10 + Math.random()*40;
+      b.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}%;
+        animation-duration:${10+Math.random()*15}s;
+        animation-delay:${Math.random()*12}s;`;
+      document.body.appendChild(b);
+    }
+  })();
+</script>
+
+<header>
+  <div class="header-logo">
+    <span>🌊</span>
+    <h1>ACQUAPARK</h1>
+  </div>
+  <div class="header-user">
+    <div class="user-badge">🎟️ Visitante</div>
+    <button class="btn-logout" onclick="logout()">Sair</button>
+  </div>
+</header>
+
+<div class="hero">
+  <h2>ESCOLHA SUA ATRAÇÃO</h2>
+  <p>Mergulhe em uma experiência única • Novas atrações em breve</p>
+</div>
+
+<div class="wave-divider">
+  <svg viewBox="0 0 1200 50" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0,30 C200,60 400,5 600,30 C800,55 1000,5 1200,30 L1200,50 L0,50 Z" fill="rgba(144,224,239,0.07)"/>
+  </svg>
+</div>
+
+<div class="grid-section">
+  <div class="attraction-grid">
+
+    <!-- 1 - BOIA DUPLA (active) -->
+    <div class="attraction-card active" onclick="window.location.href='boia_dupla.html'">
+      <div class="active-badge">Aberto</div>
+      <div class="card-inner">
+        <div class="card-img bg-1"><span>🛟</span></div>
+        <div class="card-label">
+          <span class="card-number">Atração 01</span>
+          <div class="card-name">Boia Dupla</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 - RIO LENTO (locked) -->
+    <div class="attraction-card locked">
+      <div class="lock-icon">🔒</div>
+      <div class="card-inner">
+        <div class="card-img bg-2"><span>🌿</span></div>
+        <div class="card-label">
+          <span class="card-number">Atração 02</span>
+          <div class="card-name">Rio Lento</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 - KIDS (locked) -->
+    <div class="attraction-card locked">
+      <div class="lock-icon">🔒</div>
+      <div class="card-inner">
+        <div class="card-img bg-3"><span>🧒</span></div>
+        <div class="card-label">
+          <span class="card-number">Atração 03</span>
+          <div class="card-name">Kids</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 - PRAIA (locked) -->
+    <div class="attraction-card locked">
+      <div class="lock-icon">🔒</div>
+      <div class="card-inner">
+        <div class="card-img bg-4"><span>🏖️</span></div>
+        <div class="card-label">
+          <span class="card-number">Atração 04</span>
+          <div class="card-name">Praia</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 - RADICAIS (locked) -->
+    <div class="attraction-card locked">
+      <div class="lock-icon">🔒</div>
+      <div class="card-inner">
+        <div class="card-img bg-5"><span>🚀</span></div>
+        <div class="card-label">
+          <span class="card-number">Atração 05</span>
+          <div class="card-name">Radicais</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 - MOAIS (locked) -->
+    <div class="attraction-card locked">
+      <div class="lock-icon">🔒</div>
+      <div class="card-inner">
+        <div class="card-img bg-6"><span>🗿</span></div>
+        <div class="card-label">
+          <span class="card-number">Atração 06</span>
+          <div class="card-name">Moais</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7 - OCTOPUS (locked) -->
+    <div class="attraction-card locked">
+      <div class="lock-icon">🔒</div>
+      <div class="card-inner">
+        <div class="card-img bg-7"><span>🐙</span></div>
+        <div class="card-label">
+          <span class="card-number">Atração 07</span>
+          <div class="card-name">Octopus</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8 - ACQUABAR (locked) -->
+    <div class="attraction-card locked">
+      <div class="lock-icon">🔒</div>
+      <div class="card-inner">
+        <div class="card-img bg-8"><span>🍹</span></div>
+        <div class="card-label">
+          <span class="card-number">Atração 08</span>
+          <div class="card-name">Acquabar</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function logout() {
+    localStorage.removeItem('jwt_token');
+    window.location.href = 'index.html';
+  }
+</script>
+</body>
+</html>

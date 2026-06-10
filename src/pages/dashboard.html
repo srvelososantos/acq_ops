@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaPark — Atrações</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0f14;--surface:#131820;--surface-2:#1a2030;--surface-3:#212840;
+  --border:rgba(255,255,255,0.07);--border-2:rgba(255,255,255,0.11);
+  --accent:#3b82f6;--accent-dim:rgba(59,130,246,0.10);
+  --text-1:#f0f4ff;--text-2:#8892a4;--text-3:#4a5568;
+  --green:#10b981;--green-dim:rgba(16,185,129,0.12);
+  --radius:10px;--radius-lg:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);color:var(--text-1);
+  min-height:100vh;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(59,130,246,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(59,130,246,0.025) 1px,transparent 1px);
+  background-size:48px 48px;pointer-events:none;z-index:0;
+}
+
+/* Header */
+header{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;height:60px;
+  background:rgba(12,15,20,0.92);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(12px);
+}
+.h-brand{display:flex;align-items:center;gap:10px;}
+.h-logo-icon{
+  width:30px;height:30px;background:var(--accent);
+  border-radius:7px;display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;
+}
+.h-logo-name{
+  font-family:'Sora',sans-serif;font-size:.95rem;
+  font-weight:700;letter-spacing:2px;color:var(--text-1);
+}
+.h-right{display:flex;align-items:center;gap:12px;}
+.h-user{
+  display:flex;align-items:center;gap:8px;
+  padding:5px 12px;
+  background:var(--surface-2);
+  border:1px solid var(--border-2);
+  border-radius:var(--radius);
+}
+.h-avatar{
+  width:24px;height:24px;border-radius:50%;
+  background:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.65rem;font-weight:600;color:#fff;
+  font-family:'DM Mono',monospace;
+}
+.h-username{font-size:.82rem;color:var(--text-2);font-weight:500;}
+.btn-sm{
+  padding:6px 14px;
+  background:transparent;
+  border:1px solid var(--border-2);
+  border-radius:var(--radius);
+  color:var(--text-2);
+  font-family:'DM Sans',sans-serif;
+  font-size:.78rem;font-weight:500;
+  cursor:pointer;transition:all .2s;
+}
+.btn-sm:hover{border-color:rgba(239,68,68,.4);color:#fca5a5;background:rgba(239,68,68,.06);}
+
+/* Main */
+main{
+  position:relative;z-index:1;
+  max-width:1060px;margin:0 auto;
+  padding:40px 24px 64px;
+}
+
+.page-header{margin-bottom:36px;}
+.page-header h1{
+  font-family:'Sora',sans-serif;
+  font-size:1.6rem;font-weight:700;
+  color:var(--text-1);margin-bottom:4px;
+}
+.page-header p{font-size:.85rem;color:var(--text-2);font-weight:300;}
+
+/* Grid */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+
+/* Card */
+.attr-card{
+  border-radius:var(--radius-lg);
+  border:1px solid var(--border);
+  background:var(--surface);
+  overflow:hidden;
+  cursor:pointer;
+  transition:border-color .2s,transform .2s,box-shadow .2s;
+  animation:cardIn .4s cubic-bezier(.22,.68,0,1.1) both;
+  border-color:rgba(59,130,246,0.3);
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.attr-card:nth-child(1){animation-delay:.04s}
+.attr-card:nth-child(2){animation-delay:.08s}
+.attr-card:nth-child(3){animation-delay:.12s}
+.attr-card:nth-child(4){animation-delay:.16s}
+.attr-card:nth-child(5){animation-delay:.20s}
+.attr-card:nth-child(6){animation-delay:.24s}
+.attr-card:nth-child(7){animation-delay:.28s}
+.attr-card:nth-child(8){animation-delay:.32s}
+
+.attr-card:hover{
+  border-color:var(--accent);
+  transform:translateY(-3px);
+  box-shadow:0 12px 32px rgba(59,130,246,0.15);
+}
+
+.card-thumb{
+  aspect-ratio:1;
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.8rem;
+  position:relative;
+}
+/* attraction background per card — index matches attraction INTEGER in DB */
+.c1{background:linear-gradient(145deg,#0f2744,#1a3a6b);}  /* 1 = Bóia Dupla   */
+.c2{background:linear-gradient(145deg,#0d2b1d,#1a4a2e);}  /* 2 = Rio Lento     */
+.c3{background:linear-gradient(145deg,#2d1a08,#4a2c0e);}  /* 3 = Kids          */
+.c4{background:linear-gradient(145deg,#2d2208,#4a380e);}  /* 4 = Praia         */
+.c5{background:linear-gradient(145deg,#2d0a0a,#4a1515);}  /* 5 = Radicais      */
+.c6{background:linear-gradient(145deg,#160d2d,#251550);}  /* 6 = Moais         */
+.c7{background:linear-gradient(145deg,#0a1040,#121a6b);}  /* 7 = Octopus       */
+.c8{background:linear-gradient(145deg,#2d1a08,#4a2c0e);}  /* 8 = Acquabar      */
+
+.open-badge{
+  position:absolute;top:10px;left:10px;
+  background:var(--green);border-radius:4px;
+  padding:2px 8px;font-size:.6rem;font-weight:600;
+  font-family:'DM Mono',monospace;letter-spacing:.5px;color:#fff;
+}
+
+.card-info{
+  padding:14px 16px 16px;
+  border-top:1px solid var(--border);
+}
+.card-num{
+  font-family:'DM Mono',monospace;
+  font-size:.62rem;color:var(--text-3);
+  letter-spacing:1px;margin-bottom:3px;
+}
+.card-name{
+  font-family:'Sora',sans-serif;
+  font-size:.9rem;font-weight:600;
+  color:var(--text-1);letter-spacing:.5px;
+}
+
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:480px){
+  header{padding:0 16px;}
+  main{padding:28px 14px 48px;}
+  .grid{gap:10px;}
+}
+</style>
+</head>
+<body>
+<script>
+  const token=localStorage.getItem('jwt_token');
+  const role=localStorage.getItem('user_role');
+  if(!token)window.location.href='index.html';
+  if(role==='supervisor')window.location.href='supervisor.html';
+</script>
+
+<header>
+  <div class="h-brand">
+    <div class="h-logo-icon">🌊</div>
+    <span class="h-logo-name">ACQUAPARK</span>
+  </div>
+  <div class="h-right">
+    <div class="h-user">
+      <div class="h-avatar" id="avatar-initials">--</div>
+      <span class="h-username" id="username-display">Carregando...</span>
+    </div>
+    <button class="btn-sm" onclick="logout()">Sair</button>
+  </div>
+</header>
+
+<main>
+  <div class="page-header">
+    <h1>Atrações</h1>
+    <p>Selecione uma atração para iniciar a inspeção diária</p>
+  </div>
+
+  <div class="grid">
+
+    <!-- attraction=1 → Bóia Dupla -->
+    <div class="attr-card" onclick="openAttraction(1,'Bóia Dupla')">
+      <div class="card-thumb c1">
+        <span class="open-badge">ABERTO</span>
+        🛟
+      </div>
+      <div class="card-info">
+        <div class="card-num">ATRAÇÃO 01</div>
+        <div class="card-name">Bóia Dupla</div>
+      </div>
+    </div>
+
+    <!-- attraction=2 → Rio Lento -->
+    <div class="attr-card" onclick="openAttraction(2,'Rio Lento')">
+      <div class="card-thumb c2">
+        <span class="open-badge">ABERTO</span>
+        🌿
+      </div>
+      <div class="card-info">
+        <div class="card-num">ATRAÇÃO 02</div>
+        <div class="card-name">Rio Lento</div>
+      </div>
+    </div>
+
+    <!-- attraction=3 → Kids -->
+    <div class="attr-card" onclick="openAttraction(3,'Kids')">
+      <div class="card-thumb c3">
+        <span class="open-badge">ABERTO</span>
+        🧒
+      </div>
+      <div class="card-info">
+        <div class="card-num">ATRAÇÃO 03</div>
+        <div class="card-name">Kids</div>
+      </div>
+    </div>
+
+    <!-- attraction=4 → Praia -->
+    <div class="attr-card" onclick="openAttraction(4,'Praia')">
+      <div class="card-thumb c4">
+        <span class="open-badge">ABERTO</span>
+        🏖️
+      </div>
+      <div class="card-info">
+        <div class="card-num">ATRAÇÃO 04</div>
+        <div class="card-name">Praia</div>
+      </div>
+    </div>
+
+    <!-- attraction=5 → Radicais -->
+    <div class="attr-card" onclick="openAttraction(5,'Radicais')">
+      <div class="card-thumb c5">
+        <span class="open-badge">ABERTO</span>
+        🚀
+      </div>
+      <div class="card-info">
+        <div class="card-num">ATRAÇÃO 05</div>
+        <div class="card-name">Radicais</div>
+      </div>
+    </div>
+
+    <!-- attraction=6 → Moais -->
+    <div class="attr-card" onclick="openAttraction(6,'Moais')">
+      <div class="card-thumb c6">
+        <span class="open-badge">ABERTO</span>
+        🗿
+      </div>
+      <div class="card-info">
+        <div class="card-num">ATRAÇÃO 06</div>
+        <div class="card-name">Moais</div>
+      </div>
+    </div>
+
+    <!-- attraction=7 → Octopus -->
+    <div class="attr-card" onclick="openAttraction(7,'Octopus')">
+      <div class="card-thumb c7">
+        <span class="open-badge">ABERTO</span>
+        🐙
+      </div>
+      <div class="card-info">
+        <div class="card-num">ATRAÇÃO 07</div>
+        <div class="card-name">Octopus</div>
+      </div>
+    </div>
+
+    <!-- attraction=8 → Acquabar -->
+    <div class="attr-card" onclick="openAttraction(8,'Acquabar')">
+      <div class="card-thumb c8">
+        <span class="open-badge">ABERTO</span>
+        👶
+      </div>
+      <div class="card-info">
+        <div class="card-num">ATRAÇÃO 08</div>
+        <div class="card-name">AcquaBaby</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+function logout(){localStorage.clear();window.location.href='index.html';}
+
+// Navega para questions.html passando attraction (INTEGER do banco) e name (exibição)
+function openAttraction(attractionId, attractionName) {
+  const params = new URLSearchParams({
+    attraction: attractionId,
+    name: attractionName
+  });
+  window.location.href = `questions.html?${params.toString()}`;
+}
+
+(function(){
+  const u=localStorage.getItem('username')||'Operador';
+  document.getElementById('username-display').textContent=u;
+  document.getElementById('avatar-initials').textContent=u.slice(0,2).toUpperCase();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bóia Dupla — Lista de Inspeção Diária</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ocean: #0077b6;
+    --wave: #00b4d8;
+    --foam: #90e0ef;
+    --deep: #03045e;
+    --mid: #023e8a;
+    --white: #ffffff;
+    --coral: #f77f00;
+    --success: #00c48c;
+    --danger: #e63946;
+    --warn: #f4a261;
+    --card-bg: rgba(255,255,255,0.055);
+    --border: rgba(144,224,239,0.18);
+    --input-bg: rgba(255,255,255,0.07);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(160deg, #03045e 0%, #023e8a 45%, #0077b6 100%);
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* ── Header ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px;
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 200;
+    gap: 12px;
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .back-btn {
+    background: rgba(0,180,216,0.12);
+    border: 1px solid rgba(0,180,216,0.25);
+    border-radius: 10px;
+    padding: 8px 14px;
+    color: var(--foam);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .back-btn:hover { background: rgba(0,180,216,0.25); }
+  .header-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 3px;
+    text-shadow: 0 0 20px rgba(0,180,216,0.5);
+  }
+  .header-date {
+    font-size: 0.78rem;
+    color: var(--foam);
+    opacity: 0.7;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  /* ── Main container ── */
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+
+  /* ── Page title bar ── */
+  .page-header {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 22px 28px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    animation: fadeIn 0.5s ease both;
+  }
+  .page-title-block h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.7rem;
+    letter-spacing: 3px;
+    color: var(--white);
+  }
+  .page-title-block .date-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,180,216,0.15);
+    border: 1px solid rgba(0,180,216,0.3);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--foam);
+    margin-top: 6px;
+  }
+
+  .legend-btn {
+    background: rgba(244,162,97,0.15);
+    border: 1px solid rgba(244,162,97,0.3);
+    border-radius: 10px;
+    padding: 9px 16px;
+    color: var(--warn);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .legend-btn:hover { background: rgba(244,162,97,0.25); }
+
+  /* ── Legend panel ── */
+  .legend-panel {
+    background: rgba(244,162,97,0.07);
+    border: 1px solid rgba(244,162,97,0.2);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    display: none;
+    animation: slideDown 0.3s ease both;
+  }
+  .legend-panel.open { display: block; }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .legend-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    color: var(--warn);
+    margin-bottom: 14px;
+  }
+  .legend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 10px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .legend-icon-badge {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+    background: rgba(0,180,216,0.15);
+    border: 1px solid rgba(0,180,216,0.2);
+  }
+  .legend-item-text { font-size: 0.8rem; line-height: 1.4; color: rgba(255,255,255,0.8); }
+  .legend-item-text strong { color: var(--foam); display: block; margin-bottom: 1px; }
+
+  /* ── Section card ── */
+  .section-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    animation: fadeIn 0.4s ease both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-card:nth-child(2) { animation-delay: 0.05s; }
+  .section-card:nth-child(3) { animation-delay: 0.10s; }
+  .section-card:nth-child(4) { animation-delay: 0.15s; }
+  .section-card:nth-child(5) { animation-delay: 0.20s; }
+  .section-card:nth-child(6) { animation-delay: 0.25s; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 22px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+    gap: 12px;
+  }
+  .section-header:hover { background: rgba(0,180,216,0.07); }
+
+  .section-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    color: var(--wave);
+    background: rgba(0,180,216,0.12);
+    border: 1px solid rgba(0,180,216,0.22);
+    border-radius: 8px;
+    padding: 2px 9px;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    color: var(--white);
+  }
+
+  .section-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: background 0.3s;
+  }
+  .status-dot.ok { background: var(--success); box-shadow: 0 0 6px rgba(0,196,140,0.6); }
+  .status-dot.warn { background: var(--warn); box-shadow: 0 0 6px rgba(244,162,97,0.6); }
+
+  .chevron {
+    font-size: 0.8rem;
+    color: var(--foam);
+    opacity: 0.5;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+  .section-card.expanded .chevron { transform: rotate(180deg); }
+
+  .section-body {
+    display: none;
+    padding: 0 22px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .section-card.expanded .section-body { display: block; }
+
+  /* ── Question row ── */
+  .q-row {
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(144,224,239,0.08);
+  }
+  .q-row:last-child { border-bottom: none; }
+
+  .q-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .q-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .q-type-badge {
+    width: 26px; height: 26px;
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .badge-visual { background: rgba(0,180,216,0.15); border: 1px solid rgba(0,180,216,0.25); }
+  .badge-physical { background: rgba(144,224,239,0.12); border: 1px solid rgba(144,224,239,0.2); }
+  .badge-sound { background: rgba(100,200,100,0.12); border: 1px solid rgba(100,200,100,0.2); }
+  .badge-critical { background: rgba(230,57,70,0.15); border: 1px solid rgba(230,57,70,0.3); }
+
+  .q-text {
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.85);
+    flex: 1;
+  }
+  .q-text .q-sub {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--foam);
+    opacity: 0.55;
+    margin-top: 2px;
+    font-style: italic;
+  }
+
+  /* Radio group */
+  .radio-group {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+    align-self: flex-start;
+    margin-top: 1px;
+  }
+
+  .radio-opt {
+    display: none;
+  }
+  .radio-opt + label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 8px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.18s;
+    border: 1.5px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.45);
+    user-select: none;
+  }
+  .radio-opt.opt-sim + label { }
+  .radio-opt.opt-nao + label { }
+  .radio-opt.opt-na + label { font-size: 0.65rem; }
+
+  .radio-opt.opt-sim:checked + label {
+    background: rgba(0,196,140,0.2);
+    border-color: var(--success);
+    color: var(--success);
+    box-shadow: 0 0 10px rgba(0,196,140,0.25);
+  }
+  .radio-opt.opt-nao:checked + label {
+    background: rgba(230,57,70,0.2);
+    border-color: var(--danger);
+    color: var(--danger);
+    box-shadow: 0 0 10px rgba(230,57,70,0.25);
+  }
+  .radio-opt.opt-na:checked + label {
+    background: rgba(144,144,144,0.15);
+    border-color: rgba(200,200,200,0.4);
+    color: rgba(200,200,200,0.8);
+  }
+
+  /* Obs toggle */
+  .obs-toggle {
+    display: block;
+    margin-top: 8px;
+    background: none;
+    border: none;
+    color: rgba(144,224,239,0.5);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.74rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
+    text-align: left;
+  }
+  .obs-toggle:hover { color: var(--foam); }
+  .obs-toggle.has-content { color: var(--warn); }
+
+  .obs-box {
+    display: none;
+    margin-top: 8px;
+    animation: fadeIn 0.2s ease both;
+  }
+  .obs-box.open { display: block; }
+  .obs-box textarea {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1.5px solid rgba(144,224,239,0.15);
+    border-radius: 10px;
+    padding: 10px 12px;
+    color: var(--white);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.83rem;
+    resize: vertical;
+    min-height: 64px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .obs-box textarea::placeholder { color: rgba(255,255,255,0.25); }
+  .obs-box textarea:focus {
+    border-color: var(--wave);
+    box-shadow: 0 0 0 3px rgba(0,180,216,0.12);
+  }
+
+  /* Critical row highlight */
+  .q-row.critical-row {
+    background: rgba(230,57,70,0.04);
+    border-radius: 10px;
+    padding: 12px 10px;
+    margin: 4px -10px;
+    border-bottom: none;
+  }
+  .q-row.critical-row + .q-row { border-top: 1px solid rgba(144,224,239,0.08); }
+
+  /* ── Observações finais ── */
+  .final-obs {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 22px;
+    margin-top: 20px;
+  }
+  .final-obs-title {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--foam);
+    opacity: 0.7;
+    margin-bottom: 6px;
+  }
+  .final-obs-subtitle {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.5;
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+  .final-obs textarea {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1.5px solid rgba(144,224,239,0.15);
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: var(--white);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    resize: vertical;
+    min-height: 100px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .final-obs textarea::placeholder { color: rgba(255,255,255,0.2); }
+  .final-obs textarea:focus {
+    border-color: var(--wave);
+    box-shadow: 0 0 0 3px rgba(0,180,216,0.12);
+  }
+
+  /* ── Submit ── */
+  .submit-row {
+    margin-top: 24px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .btn-submit {
+    padding: 14px 36px;
+    background: linear-gradient(135deg, var(--wave), var(--ocean));
+    border: none;
+    border-radius: 14px;
+    color: var(--white);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: transform 0.18s, box-shadow 0.18s;
+    box-shadow: 0 6px 24px rgba(0,119,182,0.45);
+  }
+  .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,180,216,0.5); }
+  .btn-submit:active { transform: scale(0.98); }
+
+  .btn-clear {
+    padding: 14px 24px;
+    background: rgba(255,255,255,0.05);
+    border: 1.5px solid rgba(255,255,255,0.12);
+    border-radius: 14px;
+    color: rgba(255,255,255,0.5);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .btn-clear:hover { background: rgba(255,80,80,0.1); border-color: rgba(255,80,80,0.3); color: rgba(255,150,150,0.8); }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    header { padding: 12px 16px; }
+    .container { padding: 16px 12px 50px; }
+    .section-header { padding: 14px 16px; }
+    .section-body { padding: 0 14px 16px; }
+    .q-top { flex-direction: column; gap: 8px; }
+    .radio-group { align-self: flex-start; }
+    .page-header { padding: 16px 18px; }
+  }
+
+  /* Floating bg bubbles */
+  .bg-bubble {
+    position: fixed; border-radius: 50%;
+    background: rgba(144,224,239,0.05);
+    border: 1px solid rgba(144,224,239,0.1);
+    animation: floatBubble linear infinite;
+    pointer-events: none; z-index: 0;
+  }
+  @keyframes floatBubble {
+    0% { transform: translateY(110vh); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 0.3; }
+    100% { transform: translateY(-10vh); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<script>
+  if (!localStorage.getItem('jwt_token')) window.location.href = 'index.html';
+  // bubbles
+  for (let i = 0; i < 10; i++) {
+    const b = document.createElement('div');
+    b.className = 'bg-bubble';
+    const s = 8 + Math.random()*32;
+    b.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${12+Math.random()*14}s;animation-delay:${Math.random()*14}s;`;
+    document.body.appendChild(b);
+  }
+</script>
+
+<header>
+  <div class="header-left">
+    <a href="dashboard.html" class="back-btn">← Voltar</a>
+    <div class="header-title">🛟 Bóia Dupla</div>
+  </div>
+  <div class="header-date" id="header-date"></div>
+</header>
+
+<div class="container">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="page-title-block">
+      <h2>LISTA DE INSPEÇÃO DIÁRIA — BÓIA DUPLA</h2>
+      <div class="date-chip">📅 <span id="date-display"></span></div>
+    </div>
+    <button class="legend-btn" onclick="toggleLegend()">📋 Ver Legenda</button>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend-panel" id="legend-panel">
+    <div class="legend-title">LEGENDA</div>
+    <div class="legend-grid">
+      <div class="legend-item">
+        <div class="legend-icon-badge badge-visual">👁️</div>
+        <div class="legend-item-text"><strong>Verificação Visual</strong>Checar visualmente a condição do item</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-icon-badge badge-physical">👋</div>
+        <div class="legend-item-text"><strong>Verificação Física</strong>Checar fisicamente com a mão a condição do item</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-icon-badge badge-sound">🔊</div>
+        <div class="legend-item-text"><strong>Verificação Sonora</strong>Checagem auditiva do item</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-icon-badge badge-critical">⚠️</div>
+        <div class="legend-item-text"><strong>Nível Alto de Verificação</strong>Garantir que todos os campos tenham sido preenchidos corretamente</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-icon-badge" style="background:rgba(0,196,140,0.12);border-color:rgba(0,196,140,0.25);font-size:0.75rem;font-weight:800;color:#00c48c;font-family:'Nunito',sans-serif;">S.</div>
+        <div class="legend-item-text"><strong>SIM</strong>Item verificado está em conformidade</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-icon-badge" style="background:rgba(230,57,70,0.12);border-color:rgba(230,57,70,0.25);font-size:0.75rem;font-weight:800;color:#e63946;font-family:'Nunito',sans-serif;">N.</div>
+        <div class="legend-item-text"><strong>NÃO</strong>Item não está em conformidade e/ou possui observação</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-icon-badge" style="background:rgba(144,144,144,0.12);border-color:rgba(200,200,200,0.25);font-size:0.62rem;font-weight:800;color:rgba(200,200,200,0.8);font-family:'Nunito',sans-serif;">N/A</div>
+        <div class="legend-item-text"><strong>NÃO APLICÁVEL</strong>Item não se aplica à situação atual</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SEÇÃO 1 — ENTRADA DA ATRAÇÃO
+  ════════════════════════════════════════════════ -->
+  <div class="section-card" id="sec1">
+    <div class="section-header" onclick="toggleSection('sec1')">
+      <div class="section-header-left">
+        <span class="section-num">01</span>
+        <span class="section-title">ENTRADA DA ATRAÇÃO</span>
+      </div>
+      <div class="section-status">
+        <div class="status-dot" id="dot-sec1"></div>
+        <span class="chevron">▼</span>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <!-- Q1 -->
+      <div class="q-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-visual" title="Verificação Visual">👁️</div>
+            <div class="q-text">Boias: Todas as boias estão calibradas, sem furos e limpas?</div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q1_1" id="q1_1_s" value="S">
+            <label for="q1_1_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q1_1" id="q1_1_n" value="N">
+            <label for="q1_1_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q1_1" id="q1_1_na" value="NA">
+            <label for="q1_1_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="q-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-visual" title="Verificação Visual">👁️</div>
+            <div class="q-text">Placas: Regras e altura encontram-se instaladas e com informações visíveis?</div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q1_2" id="q1_2_s" value="S">
+            <label for="q1_2_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q1_2" id="q1_2_n" value="N">
+            <label for="q1_2_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q1_2" id="q1_2_na" value="NA">
+            <label for="q1_2_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <!-- Q3 crítico -->
+      <div class="q-row critical-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-critical" title="Nível Alto de Verificação">⚠️</div>
+            <div class="q-text">Balança ligada</div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q1_3" id="q1_3_s" value="S">
+            <label for="q1_3_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q1_3" id="q1_3_n" value="N">
+            <label for="q1_3_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q1_3" id="q1_3_na" value="NA">
+            <label for="q1_3_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SEÇÃO 2 — ESCADAS E PLATAFORMA
+  ════════════════════════════════════════════════ -->
+  <div class="section-card" id="sec2">
+    <div class="section-header" onclick="toggleSection('sec2')">
+      <div class="section-header-left">
+        <span class="section-num">02</span>
+        <span class="section-title">ESCADAS E PLATAFORMA</span>
+      </div>
+      <div class="section-status">
+        <div class="status-dot" id="dot-sec2"></div>
+        <span class="chevron">▼</span>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="q-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-physical" title="Verificação Física">👋</div>
+            <div class="q-text">Degraus e guarda-corpos da escada e plataforma: Encontram-se fixos e firmes?</div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q2_1" id="q2_1_s" value="S"><label for="q2_1_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q2_1" id="q2_1_n" value="N"><label for="q2_1_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q2_1" id="q2_1_na" value="NA"><label for="q2_1_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-visual" title="Verificação Visual">👁️</div>
+            <div class="q-text">Sistema de içamento de boia: eixo de rotação segue sem travamento e está bem lubrificado?</div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q2_2" id="q2_2_s" value="S"><label for="q2_2_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q2_2" id="q2_2_n" value="N"><label for="q2_2_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q2_2" id="q2_2_na" value="NA"><label for="q2_2_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-physical" title="Verificação Física">👋</div>
+            <div class="q-text">Sistema de içamento de boia: os botões encontram-se prontos para uso e sem irregularidade?</div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q2_3" id="q2_3_s" value="S"><label for="q2_3_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q2_3" id="q2_3_n" value="N"><label for="q2_3_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q2_3" id="q2_3_na" value="NA"><label for="q2_3_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-visual" title="Verificação Visual">👁️</div>
+            <div class="q-text">Sistema de içamento de boia: cabos encontram-se sem ferrugens e funcionam corretamente?</div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q2_4" id="q2_4_s" value="S"><label for="q2_4_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q2_4" id="q2_4_n" value="N"><label for="q2_4_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q2_4" id="q2_4_na" value="NA"><label for="q2_4_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-visual" title="Verificação Visual">👁️</div>
+            <div class="q-text">Placas: Régua de altura, regras e proibido acessórios: Encontram-se instaladas e com informações visíveis?<span class="q-sub">Torre</span></div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q2_5" id="q2_5_s" value="S"><label for="q2_5_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q2_5" id="q2_5_n" value="N"><label for="q2_5_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q2_5" id="q2_5_na" value="NA"><label for="q2_5_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SEÇÃO 3 — ESCORREGADORES, ENTRADAS, PERCURSO E CHEGADA
+  ════════════════════════════════════════════════ -->
+  <div class="section-card" id="sec3">
+    <div class="section-header" onclick="toggleSection('sec3')">
+      <div class="section-header-left">
+        <span class="section-num">03</span>
+        <span class="section-title">ESCORREGADORES, ENTRADAS, PERCURSO E CHEGADA</span>
+      </div>
+      <div class="section-status">
+        <div class="status-dot" id="dot-sec3"></div>
+        <span class="chevron">▼</span>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="q-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-physical">👋</div>
+            <div class="q-text">Entrada do escorregador PÊNDULO: Sem avarias, trincados, rachados ou pontas que possam machucar?</div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q3_1" id="q3_1_s" value="S"><label for="q3_1_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q3_1" id="q3_1_n" value="N"><label for="q3_1_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q3_1" id="q3_1_na" value="NA"><label for="q3_1_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-physical">👋</div>
+            <div class="q-text">Cinto de segurança: encontra-se em boas condições para o uso?</div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q3_2" id="q3_2_s" value="S"><label for="q3_2_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q3_2" id="q3_2_n" value="N"><label for="q3_2_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q3_2" id="q3_2_na" value="NA"><label for="q3_2_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <div class="q-row critical-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-critical">⚠️</div>
+            <div class="q-text">Realizada checagem a seco do desembarque e percurso do escorregador PÊNDULO?</div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q3_3" id="q3_3_s" value="S"><label for="q3_3_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q3_3" id="q3_3_n" value="N"><label for="q3_3_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q3_3" id="q3_3_na" value="NA"><label for="q3_3_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <div class="q-row critical-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-critical">⚠️</div>
+            <div class="q-text">Kit de primeiros socorros encontra-se pronto para uso de urgência e emergência?<span class="q-sub">PÊNDULO</span></div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q3_4" id="q3_4_s" value="S"><label for="q3_4_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q3_4" id="q3_4_n" value="N"><label for="q3_4_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q3_4" id="q3_4_na" value="NA"><label for="q3_4_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-physical">👋</div>
+            <div class="q-text">Entrada do escorregador ESFERA: Sem avarias, trincados, rachados ou pontas que possam machucar?</div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q3_5" id="q3_5_s" value="S"><label for="q3_5_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q3_5" id="q3_5_n" value="N"><label for="q3_5_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q3_5" id="q3_5_na" value="NA"><label for="q3_5_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <div class="q-row critical-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-critical">⚠️</div>
+            <div class="q-text">Realizada checagem a seco do desembarque e percurso do escorregador ESFERA?</div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q3_6" id="q3_6_s" value="S"><label for="q3_6_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q3_6" id="q3_6_n" value="N"><label for="q3_6_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q3_6" id="q3_6_na" value="NA"><label for="q3_6_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-physical">👋</div>
+            <div class="q-text">Entrada do escorregador CORREDEIRA: Sem avarias, trincados, rachados ou pontas que possam machucar?</div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q3_7" id="q3_7_s" value="S"><label for="q3_7_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q3_7" id="q3_7_n" value="N"><label for="q3_7_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q3_7" id="q3_7_na" value="NA"><label for="q3_7_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <div class="q-row critical-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-critical">⚠️</div>
+            <div class="q-text">Realizada checagem a seco do desembarque e percurso do escorregador CORREDEIRA?</div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q3_8" id="q3_8_s" value="S"><label for="q3_8_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q3_8" id="q3_8_n" value="N"><label for="q3_8_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q3_8" id="q3_8_na" value="NA"><label for="q3_8_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-physical">👋</div>
+            <div class="q-text">Entrada do escorregador CANOA: Sem avarias, trincados, rachados ou pontas que possam machucar?</div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q3_9" id="q3_9_s" value="S"><label for="q3_9_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q3_9" id="q3_9_n" value="N"><label for="q3_9_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q3_9" id="q3_9_na" value="NA"><label for="q3_9_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <div class="q-row critical-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-critical">⚠️</div>
+            <div class="q-text">Realizada checagem a seco do desembarque e percurso do escorregador CANOA?</div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q3_10" id="q3_10_s" value="S"><label for="q3_10_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q3_10" id="q3_10_n" value="N"><label for="q3_10_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q3_10" id="q3_10_na" value="NA"><label for="q3_10_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SEÇÃO 4 — ÁREA DE CIRCULAÇÃO
+  ════════════════════════════════════════════════ -->
+  <div class="section-card" id="sec4">
+    <div class="section-header" onclick="toggleSection('sec4')">
+      <div class="section-header-left">
+        <span class="section-num">04</span>
+        <span class="section-title">ÁREA DE CIRCULAÇÃO</span>
+      </div>
+      <div class="section-status">
+        <div class="status-dot" id="dot-sec4"></div>
+        <span class="chevron">▼</span>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="q-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-visual">👁️</div>
+            <div class="q-text">Piso: Área de circulação sem partes e pontas que possam machucar?</div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q4_1" id="q4_1_s" value="S"><label for="q4_1_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q4_1" id="q4_1_n" value="N"><label for="q4_1_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q4_1" id="q4_1_na" value="NA"><label for="q4_1_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-physical">👋</div>
+            <div class="q-text">As 3 calhas de chegada e grelhas encontram-se fixas e firmes?</div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q4_2" id="q4_2_s" value="S"><label for="q4_2_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q4_2" id="q4_2_n" value="N"><label for="q4_2_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q4_2" id="q4_2_na" value="NA"><label for="q4_2_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <div class="q-row critical-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-critical">⚠️</div>
+            <div class="q-text">Kit de primeiros socorros encontra-se pronto para uso de urgência e emergência?<span class="q-sub">BÓIA DUPLA</span></div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q4_3" id="q4_3_s" value="S"><label for="q4_3_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q4_3" id="q4_3_n" value="N"><label for="q4_3_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q4_3" id="q4_3_na" value="NA"><label for="q4_3_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SEÇÃO 5 — PRIMEIRA DESCIDA DO DIA
+  ════════════════════════════════════════════════ -->
+  <div class="section-card" id="sec5">
+    <div class="section-header" onclick="toggleSection('sec5')">
+      <div class="section-header-left">
+        <span class="section-num">05</span>
+        <span class="section-title">PRIMEIRA DESCIDA DO DIA</span>
+      </div>
+      <div class="section-status">
+        <div class="status-dot" id="dot-sec5"></div>
+        <span class="chevron">▼</span>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <!-- 4 sub-itens de verificação física -->
+      <div class="q-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-physical">👋</div>
+            <div class="q-text">Verificação — Escorregador: PÊNDULO<span class="q-sub">Primeira descida do dia</span></div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q5_1" id="q5_1_s" value="S"><label for="q5_1_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q5_1" id="q5_1_n" value="N"><label for="q5_1_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q5_1" id="q5_1_na" value="NA"><label for="q5_1_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-physical">👋</div>
+            <div class="q-text">Verificação — Escorregador: ESFERA<span class="q-sub">Primeira descida do dia</span></div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q5_2" id="q5_2_s" value="S"><label for="q5_2_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q5_2" id="q5_2_n" value="N"><label for="q5_2_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q5_2" id="q5_2_na" value="NA"><label for="q5_2_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-physical">👋</div>
+            <div class="q-text">Verificação — Escorregador: CORREDEIRA<span class="q-sub">Primeira descida do dia</span></div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q5_3" id="q5_3_s" value="S"><label for="q5_3_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q5_3" id="q5_3_n" value="N"><label for="q5_3_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q5_3" id="q5_3_na" value="NA"><label for="q5_3_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-top">
+          <div class="q-label">
+            <div class="q-type-badge badge-physical">👋</div>
+            <div class="q-text">Verificação — Escorregador: CANOA<span class="q-sub">Primeira descida do dia</span></div>
+          </div>
+          <div class="radio-group">
+            <input type="radio" class="radio-opt opt-sim" name="q5_4" id="q5_4_s" value="S"><label for="q5_4_s">S.</label>
+            <input type="radio" class="radio-opt opt-nao" name="q5_4" id="q5_4_n" value="N"><label for="q5_4_n">N.</label>
+            <input type="radio" class="radio-opt opt-na" name="q5_4" id="q5_4_na" value="NA"><label for="q5_4_na">N/A</label>
+          </div>
+        </div>
+        <button class="obs-toggle" onclick="toggleObs(this)">+ Observação</button>
+        <div class="obs-box"><textarea placeholder="Descreva a observação..."></textarea></div>
+      </div>
+
+      <!-- Observações finais desta seção -->
+      <div class="final-obs" style="margin-top:16px;">
+        <div class="final-obs-title">Observações Adicionais</div>
+        <div class="final-obs-subtitle">Este campo é destinado para apontamento de itens observados durante a inspeção que não se enquadram nos quesitos da Lista de Inspeção Diária específica deste brinquedo.</div>
+        <textarea id="obs-geral" placeholder="Registre aqui qualquer observação adicional relevante..."></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Submit -->
+  <div class="submit-row">
+    <button class="btn-clear" onclick="clearForm()">Limpar Formulário</button>
+    <button class="btn-submit" onclick="submitForm()">✔ Finalizar Inspeção</button>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div id="toast" style="position:fixed;top:22px;right:22px;background:linear-gradient(135deg,#00c48c,#00a870);color:#fff;padding:14px 22px;border-radius:14px;font-weight:700;font-size:0.9rem;box-shadow:0 8px 24px rgba(0,0,0,0.3);transform:translateX(200%);transition:transform 0.4s cubic-bezier(.22,.68,0,1.3);z-index:999;"></div>
+
+<script>
+  // Date
+  (function() {
+    const now = new Date();
+    const opts = { weekday:'long', day:'2-digit', month:'long', year:'numeric' };
+    const str = now.toLocaleDateString('pt-BR', opts);
+    document.getElementById('date-display').textContent = str;
+    document.getElementById('header-date').textContent = now.toLocaleDateString('pt-BR');
+  })();
+
+  // Toggle legend
+  function toggleLegend() {
+    const p = document.getElementById('legend-panel');
+    p.classList.toggle('open');
+  }
+
+  // Toggle section expand/collapse
+  function toggleSection(id) {
+    document.getElementById(id).classList.toggle('expanded');
+  }
+
+  // Toggle obs
+  function toggleObs(btn) {
+    const box = btn.nextElementSibling;
+    const isOpen = box.classList.toggle('open');
+    btn.textContent = isOpen ? '− Observação' : '+ Observação';
+    if (isOpen) box.querySelector('textarea').focus();
+  }
+
+  // Mark obs btn when has content
+  document.addEventListener('input', e => {
+    if (e.target.tagName === 'TEXTAREA' && e.target.closest('.obs-box')) {
+      const btn = e.target.closest('.obs-box').previousElementSibling;
+      btn.classList.toggle('has-content', e.target.value.trim().length > 0);
+    }
+  });
+
+  // Submit
+  function submitForm() {
+    const toast = document.getElementById('toast');
+    toast.textContent = '✅ Inspeção registrada com sucesso!';
+    toast.style.transform = 'translateX(0)';
+    setTimeout(() => toast.style.transform = 'translateX(200%)', 3000);
+  }
+
+  // Clear
+  function clearForm() {
+    if (!confirm('Tem certeza que deseja limpar todo o formulário?')) return;
+    document.querySelectorAll('input[type=radio]').forEach(r => r.checked = false);
+    document.querySelectorAll('textarea').forEach(t => t.value = '');
+    document.querySelectorAll('.obs-box.open').forEach(b => {
+      b.classList.remove('open');
+      b.previousElementSibling.textContent = '+ Observação';
+      b.previousElementSibling.classList.remove('has-content');
+    });
+  }
+</script>
+</body>
+</html>

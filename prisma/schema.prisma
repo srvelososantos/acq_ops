@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model checklist {
+  checklist_id     String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  operator_id      String?            @db.Uuid
+  dttime           DateTime?          @default(now()) @db.Timestamptz(6)
+  obs              String?            @db.VarChar(255)
+  users            users?             @relation(fields: [operator_id], references: [usr_id], onDelete: NoAction, onUpdate: NoAction)
+  checklist_answer checklist_answer[]
+}
+
+model img {
+  img_id Int      @id @default(autoincrement())
+  nome   String?  @db.VarChar(100)
+  foto   Bytes?
+  answer answer[]
+}
+
+model question {
+  question_id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  attraction            Int?
+  question              String?  @db.VarChar(255)
+  header_about_question String?  @db.VarChar(64)
+  isdeleted             Boolean? @default(false)
+  answer                answer[]
+}
+
+model users {
+  usr_id    String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username  String?     @db.VarChar(128)
+  email     String?     @db.VarChar(128)
+  passwrd   String?     @db.VarChar(255)
+  u_type    Int?
+  checklist checklist[]
+}
+
+model answer {
+  ans_id           String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  question_id      String?            @db.Uuid
+  bool_answ        Boolean?
+  obs              String?            @db.VarChar(255)
+  img_id           Int?
+  img              img?               @relation(fields: [img_id], references: [img_id], onDelete: NoAction, onUpdate: NoAction)
+  question         question?          @relation(fields: [question_id], references: [question_id], onDelete: NoAction, onUpdate: NoAction)
+  checklist_answer checklist_answer[]
+}
+
+model checklist_answer {
+  checklist_id String    @db.Uuid
+  ans_id       String    @db.Uuid
+  answer       answer    @relation(fields: [ans_id], references: [ans_id], onDelete: NoAction, onUpdate: NoAction)
+  checklist    checklist @relation(fields: [checklist_id], references: [checklist_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([checklist_id, ans_id])
+}

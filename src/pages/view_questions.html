@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaPark — Ver Perguntas</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0f14;--surface:#131820;--surface-2:#1a2030;--surface-3:#212840;
+  --border:rgba(255,255,255,0.07);--border-2:rgba(255,255,255,0.11);
+  --accent:#3b82f6;--accent-dim:rgba(59,130,246,0.10);
+  --text-1:#f0f4ff;--text-2:#8892a4;--text-3:#4a5568;
+  --green:#10b981;--green-dim:rgba(16,185,129,0.08);
+  --amber:#f59e0b;--amber-dim:rgba(245,158,11,0.10);
+  --radius:10px;--radius-lg:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-1);
+  min-height:100vh;display:flex;align-items:flex-start;justify-content:center;
+  padding:40px 16px 64px;position:relative;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(59,130,246,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(59,130,246,0.025) 1px,transparent 1px);
+  background-size:48px 48px;pointer-events:none;
+}
+
+/* ── Card ── */
+.card{
+  position:relative;z-index:1;
+  width:100%;max-width:580px;
+  background:var(--surface);
+  border:1px solid var(--border-2);
+  border-radius:var(--radius-lg);
+  padding:36px 32px;
+  box-shadow:0 24px 64px rgba(0,0,0,0.6);
+  animation:slideUp .45s cubic-bezier(.22,.68,0,1) both;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Back link ── */
+.back-link{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.78rem;color:var(--text-3);
+  cursor:pointer;background:none;border:none;padding:0;
+  font-family:'DM Sans',sans-serif;margin-bottom:24px;transition:color .2s;
+}
+.back-link:hover{color:var(--text-2);}
+
+/* ── Header ── */
+.card-header{margin-bottom:28px;}
+.card-header h2{
+  font-family:'Sora',sans-serif;
+  font-size:1.3rem;font-weight:700;color:var(--text-1);margin-bottom:4px;
+}
+.card-header p{font-size:.82rem;color:var(--text-2);font-weight:300;line-height:1.5;}
+
+.divider{height:1px;background:var(--border);margin:0 0 24px;}
+
+/* ── Field ── */
+.field{margin-bottom:20px;}
+label{
+  display:block;font-size:.7rem;font-weight:500;
+  letter-spacing:.8px;text-transform:uppercase;
+  color:var(--text-2);margin-bottom:6px;
+}
+.field-hint{font-size:.7rem;color:var(--text-3);margin-top:5px;font-family:'DM Mono',monospace;}
+
+select{
+  width:100%;background:var(--surface-2);
+  border:1px solid var(--border-2);border-radius:var(--radius);
+  padding:10px 32px 10px 13px;
+  font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text-1);
+  outline:none;cursor:pointer;
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%234a5568'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
+  transition:border-color .2s,box-shadow .2s;
+}
+select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
+select option{background:#131820;color:var(--text-1);}
+select option:disabled{color:var(--text-3);}
+
+/* ── Questions panel ── */
+.questions-panel{
+  display:none;
+  animation:fadeUp .3s ease both;
+}
+.questions-panel.visible{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Panel header row */
+.panel-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;flex-wrap:wrap;gap:8px;
+}
+.panel-title{
+  font-size:.7rem;font-weight:500;letter-spacing:.8px;
+  text-transform:uppercase;color:var(--text-2);
+}
+.panel-meta{
+  display:flex;align-items:center;gap:6px;
+}
+.count-badge{
+  background:var(--accent-dim);border:1px solid rgba(59,130,246,.25);
+  border-radius:20px;padding:2px 10px;
+  font-size:.68rem;font-weight:600;font-family:'DM Mono',monospace;
+  color:var(--accent);
+}
+.search-wrap{
+  position:relative;margin-bottom:10px;
+}
+.search-icon{
+  position:absolute;left:10px;top:50%;transform:translateY(-50%);
+  font-size:.78rem;opacity:.35;pointer-events:none;
+}
+.search-input{
+  width:100%;background:var(--surface-2);
+  border:1px solid var(--border-2);border-radius:var(--radius);
+  padding:8px 12px 8px 30px;
+  font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--text-1);
+  outline:none;transition:border-color .2s,box-shadow .2s;
+}
+.search-input::placeholder{color:var(--text-3);}
+.search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
+
+/* ── Loading ── */
+.q-loading{
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:32px;text-align:center;
+}
+.q-spinner{
+  display:inline-block;width:22px;height:22px;
+  border:2.5px solid var(--border-2);border-top-color:var(--accent);
+  border-radius:50%;animation:spin .7s linear infinite;margin-bottom:8px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.q-loading p{font-size:.8rem;color:var(--text-3);}
+
+/* ── State (empty / error) ── */
+.q-state{
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:28px;
+  text-align:center;font-size:.83rem;color:var(--text-3);
+}
+.q-state .state-icon{font-size:1.8rem;display:block;margin-bottom:8px;opacity:.5;}
+
+/* ── Section groups ── */
+.section-group{
+  margin-bottom:10px;
+  border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+  animation:fadeUp .3s ease both;
+}
+.section-group-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;background:var(--surface-2);
+  cursor:pointer;user-select:none;transition:background .15s;
+}
+.section-group-head:hover{background:var(--surface-3);}
+.sg-left{display:flex;align-items:center;gap:8px;}
+.sg-num{
+  font-family:'DM Mono',monospace;font-size:.65rem;font-weight:500;
+  color:var(--accent);padding:1px 6px;border-radius:4px;
+  background:var(--accent-dim);border:1px solid rgba(59,130,246,.2);
+  letter-spacing:.5px;flex-shrink:0;
+}
+.sg-name{
+  font-family:'Sora',sans-serif;font-size:.82rem;font-weight:600;color:var(--text-1);
+}
+.sg-right{display:flex;align-items:center;gap:6px;}
+.sg-count{
+  font-size:.65rem;font-family:'DM Mono',monospace;color:var(--text-3);
+}
+.sg-chevron{font-size:.6rem;color:var(--text-3);transition:transform .22s;}
+.section-group.open .sg-chevron{transform:rotate(180deg);}
+
+/* ── Question items ── */
+.q-list{display:none;border-top:1px solid var(--border);}
+.section-group.open .q-list{display:block;}
+
+.q-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:11px 14px;
+  border-bottom:1px solid var(--border);
+  background:var(--surface);
+  transition:background .12s;
+}
+.q-item:last-child{border-bottom:none;}
+.q-item:hover{background:var(--surface-2);}
+.q-item.hidden{display:none;}  /* filtrado pela busca */
+
+/* Index number */
+.q-index{
+  font-family:'DM Mono',monospace;font-size:.65rem;font-weight:500;
+  color:var(--text-3);width:22px;flex-shrink:0;padding-top:2px;text-align:right;
+}
+
+.q-body{flex:1;min-width:0;}
+.q-header-tag{
+  font-size:.65rem;font-weight:500;font-family:'DM Mono',monospace;
+  color:var(--text-3);letter-spacing:.4px;margin-bottom:3px;
+}
+.q-text{font-size:.84rem;color:var(--text-2);line-height:1.45;}
+.q-id{
+  font-size:.62rem;font-family:'DM Mono',monospace;color:var(--text-3);
+  margin-top:4px;opacity:.5;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;
+}
+
+/* ── No results ── */
+.no-results{
+  padding:20px;text-align:center;
+  font-size:.8rem;color:var(--text-3);display:none;
+}
+.no-results.visible{display:block;}
+
+@media(max-width:480px){
+  body{padding:24px 12px 48px;}
+  .card{padding:28px 18px;}
+}
+</style>
+</head>
+<body>
+<script>
+  if(!localStorage.getItem('jwt_token'))window.location.href='login.html';
+  if(localStorage.getItem('user_role')!=='supervisor')window.location.href='dashboard.html';
+</script>
+
+<div class="card">
+  <button class="back-link" onclick="window.location.href='supervisor.html'">← Voltar ao painel</button>
+
+  <div class="card-header">
+    <h2>Perguntas por atração</h2>
+    <p>Selecione uma atração para visualizar todas as perguntas cadastradas no checklist.</p>
+  </div>
+  <div class="divider"></div>
+
+  <!-- Dropdown de atração -->
+  <div class="field">
+    <label>Atração</label>
+    <select id="attraction-select" onchange="onAttractionChange()">
+      <option value="" disabled selected>Selecione uma atração...</option>
+      <option value="1">01 — Bóia Dupla</option>
+      <option value="2">02 — Rio Lento</option>
+      <option value="3">03 — Kids</option>
+      <option value="4">04 — Praia</option>
+      <option value="5">05 — Radicais</option>
+      <option value="6">06 — Moais</option>
+      <option value="7">07 — Octopus</option>
+      <option value="8">08 — Acquabar</option>
+    </select>
+    <div class="field-hint">GET /getquestions?attraction={id}</div>
+  </div>
+
+  <!-- Painel de perguntas (aparece após carregar) -->
+  <div class="questions-panel" id="questions-panel">
+
+    <!-- Header: título + badge de contagem -->
+    <div class="panel-header">
+      <span class="panel-title">Perguntas cadastradas</span>
+      <div class="panel-meta">
+        <span class="count-badge" id="count-badge">0</span>
+      </div>
+    </div>
+
+    <!-- Busca local -->
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input
+        class="search-input"
+        type="text"
+        id="search-input"
+        placeholder="Filtrar por texto..."
+        oninput="filterQuestions()"
+      >
+    </div>
+
+    <!-- Container das seções agrupadas -->
+    <div id="questions-container"></div>
+
+    <!-- Sem resultados no filtro -->
+    <div class="no-results" id="no-results">Nenhuma pergunta corresponde ao filtro.</div>
+  </div>
+</div>
+
+<script>
+const API_BASE   = 'http://localhost:3000';
+let allQuestions = []; // cache das perguntas carregadas
+
+function getToken() { return localStorage.getItem('jwt_token'); }
+
+function escHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Abre/fecha seção ──
+function toggleGroup(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+// ── Carrega perguntas ao trocar atração ──
+async function onAttractionChange() {
+  const attractionId = document.getElementById('attraction-select').value;
+  if (!attractionId) return;
+
+  const panel     = document.getElementById('questions-panel');
+  const container = document.getElementById('questions-container');
+  const noResults = document.getElementById('no-results');
+
+  document.getElementById('search-input').value = '';
+  noResults.classList.remove('visible');
+
+  panel.classList.add('visible');
+  container.innerHTML = `
+    <div class="q-loading">
+      <div class="q-spinner"></div>
+      <p>Carregando perguntas...</p>
+    </div>`;
+  document.getElementById('count-badge').textContent = '0';
+
+  try {
+    const res = await fetch(
+      `${API_BASE}/getquestions?attraction=${attractionId}`,
+      { headers: { 'Authorization': 'Bearer ' + getToken() } }
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    allQuestions = await res.json();
+
+    if (!Array.isArray(allQuestions) || allQuestions.length === 0) {
+      container.innerHTML = `
+        <div class="q-state">
+          <span class="state-icon">📭</span>
+          Nenhuma pergunta cadastrada para esta atração.
+        </div>`;
+      document.getElementById('count-badge').textContent = '0';
+      return;
+    }
+
+    document.getElementById('count-badge').textContent = allQuestions.length;
+    renderGroups(allQuestions);
+
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = `
+      <div class="q-state" style="color:rgba(252,165,165,.8);">
+        <span class="state-icon">⚠️</span>
+        Erro ao carregar: ${escHtml(err.message)}
+        <br>
+        <button onclick="onAttractionChange()"
+          style="margin-top:12px;padding:5px 14px;background:var(--accent);
+            border:none;border-radius:7px;color:#fff;
+            font-family:'DM Sans',sans-serif;font-size:.78rem;cursor:pointer;">
+          Tentar novamente
+        </button>
+      </div>`;
+  }
+}
+
+// ── Renderiza perguntas agrupadas por header_about_question ──
+function renderGroups(questions) {
+  const container = document.getElementById('questions-container');
+
+  // Agrupar preservando ordem de inserção
+  const grouped = new Map();
+  questions.forEach(q => {
+    const key = q.header_about_question || 'Sem agrupamento';
+    if (!grouped.has(key)) grouped.set(key, []);
+    grouped.get(key).push(q);
+  });
+
+  let secIdx = 0;
+  let html   = '';
+
+  grouped.forEach((qList, header) => {
+    secIdx++;
+    const groupId = `sg-${secIdx}`;
+
+    const rowsHtml = qList.map((q, i) => `
+      <div class="q-item" id="qi-${q.question_id}" data-text="${escHtml(q.question.toLowerCase())}">
+        <span class="q-index">${i + 1}</span>
+        <div class="q-body">
+          <div class="q-header-tag">${escHtml(header)}</div>
+          <div class="q-text">${escHtml(q.question)}</div>
+          <div class="q-id">${q.question_id}</div>
+        </div>
+      </div>`).join('');
+
+    html += `
+      <div class="section-group open" id="${groupId}">
+        <div class="section-group-head" onclick="toggleGroup('${groupId}')">
+          <div class="sg-left">
+            <span class="sg-num">${String(secIdx).padStart(2,'0')}</span>
+            <span class="sg-name">${escHtml(header)}</span>
+          </div>
+          <div class="sg-right">
+            <span class="sg-count">${qList.length} pergunta${qList.length !== 1 ? 's' : ''}</span>
+            <span class="sg-chevron">▾</span>
+          </div>
+        </div>
+        <div class="q-list">${rowsHtml}</div>
+      </div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+// ── Filtro de busca local ──
+function filterQuestions() {
+  const term = document.getElementById('search-input').value.toLowerCase().trim();
+  const items = document.querySelectorAll('.q-item');
+  let visible = 0;
+
+  items.forEach(item => {
+    const text = item.dataset.text || '';
+    const show = !term || text.includes(term);
+    item.classList.toggle('hidden', !show);
+    if (show) visible++;
+  });
+
+  // Mostrar/ocultar seções sem itens visíveis
+  document.querySelectorAll('.section-group').forEach(group => {
+    const hasVisible = group.querySelectorAll('.q-item:not(.hidden)').length > 0;
+    group.style.display = hasVisible ? '' : 'none';
+    if (hasVisible && term) group.classList.add('open');
+  });
+
+  // Atualizar badge e mensagem sem resultados
+  document.getElementById('count-badge').textContent = visible;
+  document.getElementById('no-results').classList.toggle('visible', visible === 0 && term.length > 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaPark — Supervisor</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0f14;--surface:#131820;--surface-2:#1a2030;
+  --border:rgba(255,255,255,0.07);--border-2:rgba(255,255,255,0.11);
+  --accent:#3b82f6;--accent-dim:rgba(59,130,246,0.10);
+  --text-1:#f0f4ff;--text-2:#8892a4;--text-3:#4a5568;
+  --green:#10b981;--green-dim:rgba(16,185,129,0.1);
+  --red:#ef4444;--red-dim:rgba(239,68,68,0.1);
+  --amber:#f59e0b;--amber-dim:rgba(245,158,11,0.1);
+  --radius:10px;--radius-lg:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-1);min-height:100vh;}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(59,130,246,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.025) 1px,transparent 1px);
+  background-size:48px 48px;pointer-events:none;z-index:0;
+}
+
+/* ── Header ── */
+header{
+  position:sticky;top:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;height:60px;
+  background:rgba(12,15,20,0.94);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(12px);
+}
+.h-brand{display:flex;align-items:center;gap:10px;}
+.h-logo-icon{width:30px;height:30px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.9rem;}
+.h-logo-name{font-family:'Sora',sans-serif;font-size:.95rem;font-weight:700;letter-spacing:2px;}
+.h-badge{
+  padding:3px 9px;border-radius:4px;
+  background:var(--amber-dim);border:1px solid rgba(245,158,11,0.25);
+  font-size:.65rem;font-weight:500;font-family:'DM Mono',monospace;
+  letter-spacing:1px;color:var(--amber);
+}
+
+/* User menu */
+.user-menu-wrap{position:relative;}
+.user-btn{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 12px;
+  background:var(--surface-2);
+  border:1px solid var(--border-2);
+  border-radius:var(--radius);
+  cursor:pointer;transition:border-color .2s;
+  color:var(--text-1);
+  font-family:'DM Sans',sans-serif;font-size:.82rem;
+}
+.user-btn:hover{border-color:rgba(59,130,246,0.4);}
+.user-avatar{
+  width:26px;height:26px;border-radius:50%;
+  background:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.65rem;font-weight:600;color:#fff;font-family:'DM Mono',monospace;
+}
+.chevron-icon{font-size:.65rem;color:var(--text-3);transition:transform .2s;}
+.user-menu-wrap.open .chevron-icon{transform:rotate(180deg);}
+
+.dropdown{
+  position:absolute;top:calc(100% + 8px);right:0;
+  min-width:200px;
+  background:var(--surface);
+  border:1px solid var(--border-2);
+  border-radius:var(--radius);
+  box-shadow:0 16px 48px rgba(0,0,0,0.6);
+  overflow:hidden;
+  display:none;
+  animation:dropIn .18s ease both;
+  z-index:300;
+}
+@keyframes dropIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.user-menu-wrap.open .dropdown{display:block;}
+
+.drop-header{
+  padding:12px 14px 10px;
+  border-bottom:1px solid var(--border);
+}
+.drop-name{font-size:.82rem;font-weight:600;color:var(--text-1);}
+.drop-role{font-size:.7rem;color:var(--text-3);font-family:'DM Mono',monospace;letter-spacing:.5px;margin-top:1px;}
+
+.drop-item{
+  display:flex;align-items:center;gap:9px;
+  padding:10px 14px;
+  font-size:.83rem;color:var(--text-2);
+  cursor:pointer;transition:background .15s,color .15s;
+  border:none;background:none;width:100%;text-align:left;
+  font-family:'DM Sans',sans-serif;
+}
+.drop-item:hover{background:var(--surface-2);color:var(--text-1);}
+.drop-item.danger:hover{color:#fca5a5;background:rgba(239,68,68,.06);}
+.drop-icon{font-size:.85rem;width:16px;text-align:center;}
+.drop-divider{height:1px;background:var(--border);margin:4px 0;}
+
+/* ── Main ── */
+main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:36px 24px 64px;}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px;}
+.stat{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:18px 20px;
+  animation:fadeUp .4s ease both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.stat:nth-child(1){animation-delay:.04s}.stat:nth-child(2){animation-delay:.08s}
+.stat:nth-child(3){animation-delay:.12s}.stat:nth-child(4){animation-delay:.16s}
+.stat-val{
+  font-family:'Sora',sans-serif;font-size:2rem;font-weight:700;
+  line-height:1;margin-bottom:5px;
+}
+.stat-val.blue{color:var(--accent)}.stat-val.green{color:var(--green)}
+.stat-val.red{color:var(--red)}.stat-val.amber{color:var(--amber)}
+.stat-label{font-size:.72rem;color:var(--text-3);font-weight:500;letter-spacing:.5px;text-transform:uppercase;}
+
+/* Toolbar */
+.toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;margin-bottom:16px;
+  animation:fadeUp .4s .12s ease both;
+}
+.toolbar-title{font-family:'Sora',sans-serif;font-size:1rem;font-weight:600;color:var(--text-1);}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+
+.search-wrap{position:relative;}
+.search-input{
+  background:var(--surface);border:1px solid var(--border-2);
+  border-radius:var(--radius);padding:7px 12px 7px 32px;
+  font-family:'DM Sans',sans-serif;font-size:.8rem;color:var(--text-1);
+  outline:none;width:180px;transition:border-color .2s,width .3s;
+}
+.search-input::placeholder{color:var(--text-3);}
+.search-input:focus{border-color:var(--accent);width:220px;}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:.8rem;opacity:.4;pointer-events:none;}
+
+select.filter{
+  background:var(--surface);border:1px solid var(--border-2);
+  border-radius:var(--radius);padding:7px 28px 7px 11px;
+  font-family:'DM Sans',sans-serif;font-size:.8rem;color:var(--text-2);
+  outline:none;cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%234a5568'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 9px center;
+  transition:border-color .2s;
+}
+select.filter:focus{border-color:var(--accent);}
+select.filter option{background:#131820;}
+
+/* Table */
+.table-wrap{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-lg);overflow:hidden;
+  animation:fadeUp .4s .16s ease both;
+}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:rgba(0,0,0,0.2);border-bottom:1px solid var(--border);}
+th{
+  padding:11px 16px;text-align:left;
+  font-size:.66rem;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--text-3);font-family:'DM Mono',monospace;white-space:nowrap;
+}
+th:first-child{padding-left:20px;}
+tbody tr{
+  border-bottom:1px solid var(--border);cursor:pointer;
+  transition:background .15s;
+  animation:rowIn .35s ease both;
+}
+@keyframes rowIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--surface-2);}
+td{padding:13px 16px;font-size:.84rem;vertical-align:middle;}
+td:first-child{padding-left:20px;}
+
+.attr-cell{display:flex;align-items:center;gap:10px;}
+.attr-icon{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;
+}
+.attr-name{font-weight:500;color:var(--text-1);}
+
+.date-primary{color:var(--text-1);font-size:.83rem;}
+.date-secondary{color:var(--text-3);font-size:.72rem;font-family:'DM Mono',monospace;margin-top:2px;}
+
+.user-cell{display:flex;align-items:center;gap:8px;}
+.avatar-sm{
+  width:26px;height:26px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),#1d4ed8);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.62rem;font-weight:600;color:#fff;font-family:'DM Mono',monospace;flex-shrink:0;
+}
+.user-name{font-size:.83rem;color:var(--text-2);}
+
+.n-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:20px;
+  font-size:.72rem;font-weight:500;font-family:'DM Mono',monospace;
+}
+.n-chip.zero{background:var(--green-dim);color:var(--green);border:1px solid rgba(16,185,129,0.2);}
+.n-chip.low {background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2);}
+.n-chip.high{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2);}
+
+.status-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:500;
+}
+.status-chip.ok{background:var(--green-dim);color:var(--green);border:1px solid rgba(16,185,129,0.2);}
+.status-chip.pend{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2);}
+
+.view-btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:5px 12px;border-radius:7px;
+  background:transparent;border:1px solid var(--border-2);
+  color:var(--text-2);font-family:'DM Sans',sans-serif;
+  font-size:.75rem;font-weight:500;cursor:pointer;transition:all .18s;
+}
+.view-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim);}
+
+.pagination{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;border-top:1px solid var(--border);
+  flex-wrap:wrap;gap:8px;
+}
+.page-info{font-size:.75rem;color:var(--text-3);font-family:'DM Mono',monospace;}
+.page-btns{display:flex;gap:5px;}
+.page-btn{
+  width:28px;height:28px;border-radius:6px;
+  background:var(--surface-2);border:1px solid var(--border);
+  color:var(--text-2);font-family:'DM Mono',monospace;font-size:.78rem;
+  cursor:pointer;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;
+}
+.page-btn:hover{border-color:var(--accent);color:var(--accent);}
+.page-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+/* Empty */
+.empty{text-align:center;padding:48px 20px;color:var(--text-3);}
+.empty-icon{font-size:2.5rem;margin-bottom:10px;display:block;opacity:.4;}
+
+@media(max-width:900px){
+  .stats{grid-template-columns:repeat(2,1fr);}
+  header{padding:0 16px;}
+  main{padding:24px 14px 48px;}
+  .table-wrap{overflow-x:auto;}
+  table{min-width:600px;}
+}
+@media(max-width:500px){
+  .stats{grid-template-columns:repeat(2,1fr);gap:8px;}
+}
+</style>
+</head>
+<body>
+<script>
+  const token=localStorage.getItem('jwt_token');
+  const role=localStorage.getItem('user_role');
+  if(!token)window.location.href='index.html';
+  if(role!=='supervisor')window.location.href='dashboard.html';
+</script>
+
+<header>
+  <div class="h-brand">
+    <div class="h-logo-icon">🌊</div>
+    <span class="h-logo-name">ACQUAPARK</span>
+    <span class="h-badge">SUPERVISOR</span>
+  </div>
+  <div class="user-menu-wrap" id="userMenu">
+    <div class="user-btn" onclick="toggleMenu()">
+      <div class="user-avatar" id="sv-avatar">SV</div>
+      <span id="sv-name">Supervisor</span>
+      <span class="chevron-icon">▾</span>
+    </div>
+    <div class="dropdown">
+      <div class="drop-header">
+        <div class="drop-name" id="drop-name">Supervisor</div>
+        <div class="drop-role">SUPERVISOR · AquaPark</div>
+      </div>
+      <button class="drop-item" onclick="openCreateOperator()">
+        <span class="drop-icon">➕</span> Criar novo operador
+      </button>
+      <button class="drop-item" onclick="openCreateQuestion()">
+        <span class="drop-icon">❓</span> Criar nova pergunta
+      </button>
+      <button class="drop-item" onclick="openViewQuestions()">
+        <span class="drop-icon">📋</span> Ver perguntas
+      </button>
+      <button class="drop-item" onclick="openDeleteQuestion()">
+        <span class="drop-icon">🗑️</span> Excluir pergunta
+      </button>
+      <div class="drop-divider"></div>
+      <button class="drop-item danger" onclick="logout()">
+        <span class="drop-icon">↩</span> Sair
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="stats">
+    <div class="stat"><div class="stat-val blue" id="stat-today">—</div><div class="stat-label">Inspeções hoje</div></div>
+    <div class="stat"><div class="stat-val green" id="stat-ok">—%</div><div class="stat-label">Conformidade</div></div>
+    <div class="stat"><div class="stat-val red" id="stat-n">—</div><div class="stat-label">Não conformes</div></div>
+    <div class="stat"><div class="stat-val amber">1</div><div class="stat-label">Atrações ativas</div></div>
+  </div>
+
+  <div class="toolbar">
+    <span class="toolbar-title">Histórico de Inspeções</span>
+    <div class="filters">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" type="text" placeholder="Buscar inspetor..." id="search" oninput="filterTable()">
+      </div>
+      <select class="filter" id="f-attr" onchange="filterTable()">
+        <option value="">Todas as atrações</option>
+        <option value="1">Bóia Dupla</option>
+        <option value="2">Rio Lento</option>
+        <option value="3">Kids</option>
+        <option value="4">Praia</option>
+        <option value="5">Radicais</option>
+        <option value="6">Moais</option>
+        <option value="7">Octopus</option>
+        <option value="8">Acquabar</option>
+      </select>
+      <select class="filter" id="f-status" onchange="filterTable()">
+        <option value="">Todos</option>
+        <option value="ok">Conformes</option>
+        <option value="pend">Com pendências</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Atração</th><th>Data</th><th>Inspetor</th>
+          <th>Resp. N.</th><th>Status</th><th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="pagination">
+      <span class="page-info" id="page-info">—</span>
+      <div class="page-btns">
+        <button class="page-btn">‹</button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">›</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════
+const API_BASE = 'http://localhost:3000';
+
+// ═══════════════════════════════════════════════════
+//  STATE
+//  allRecords  → array completo retornado pela API
+//  filtered    → subconjunto após aplicar filtros
+// ═══════════════════════════════════════════════════
+let allRecords = [];
+let filtered   = [];
+
+// ═══════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════
+function getToken() { return localStorage.getItem('jwt_token'); }
+
+// Converte dttime ISO → { date: 'DD/MM/AAAA', time: 'HH:MM' }
+function parseDateTime(dttime) {
+  if (!dttime) return { date: '—', time: '—' };
+  const d = new Date(dttime);
+  return {
+    date: d.toLocaleDateString('pt-BR'),
+    time: d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+  };
+}
+
+// Iniciais a partir do username
+function initials(name) {
+  if (!name) return '??';
+  const parts = name.trim().split(/\s+/);
+  return parts.length >= 2
+    ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+    : name.slice(0, 2).toUpperCase();
+}
+
+// Atração a partir do checklist
+// Por ora todos os checklists são da Bóia Dupla (attraction=1).
+// Expanda este mapa conforme novas atrações forem adicionadas.
+const ATTRACTION_MAP = {
+  1: { name: 'Bóia Dupla', icon: '🛟', bg: 'linear-gradient(135deg,#0f2744,#1a3a6b)' },
+  2: { name: 'Rio Lento',  icon: '🌿', bg: 'linear-gradient(135deg,#0d2b1d,#1a4a2e)' },
+  3: { name: 'Kids',       icon: '🧒', bg: 'linear-gradient(135deg,#2d1a08,#4a2c0e)' },
+  4: { name: 'Praia',      icon: '🏖️', bg: 'linear-gradient(135deg,#2d2208,#4a380e)' },
+  5: { name: 'Radicais',   icon: '🚀', bg: 'linear-gradient(135deg,#2d0a0a,#4a1515)' },
+  6: { name: 'Moais',      icon: '🗿', bg: 'linear-gradient(135deg,#160d2d,#251550)' },
+  7: { name: 'Octopus',    icon: '🐙', bg: 'linear-gradient(135deg,#0a1040,#121a6b)' },
+  8: { name: 'Acquabar',   icon: '🍹', bg: 'linear-gradient(135deg,#2d1a08,#4a2c0e)' },
+  default: { name: 'Atração', icon: '🎢', bg: 'linear-gradient(135deg,#1a1a2e,#16213e)' }
+};
+function resolveAttraction(attractionId) {
+  return ATTRACTION_MAP[attractionId] ?? ATTRACTION_MAP.default;
+}
+
+// ═══════════════════════════════════════════════════
+//  LOADING / ERROR STATE NA TABELA
+// ═══════════════════════════════════════════════════
+function setTableState(type, message) {
+  const tb = document.getElementById('tbody');
+  if (type === 'loading') {
+    tb.innerHTML = `
+      <tr><td colspan="6">
+        <div class="empty">
+          <div style="display:inline-block;width:28px;height:28px;border:2.5px solid rgba(255,255,255,.1);
+            border-top-color:var(--accent);border-radius:50%;
+            animation:spin .7s linear infinite;margin-bottom:12px;"></div>
+          <p style="color:var(--text-3);font-size:.85rem;">Carregando checklists...</p>
+        </div>
+      </td></tr>`;
+  } else if (type === 'error') {
+    tb.innerHTML = `
+      <tr><td colspan="6">
+        <div class="empty">
+          <span class="empty-icon">⚠️</span>
+          <p style="color:var(--text-3);font-size:.85rem;margin-bottom:12px;">${message}</p>
+          <button onclick="loadChecklists()"
+            style="padding:6px 16px;background:var(--accent);border:none;border-radius:8px;
+              color:#fff;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;cursor:pointer;">
+            Tentar novamente
+          </button>
+        </div>
+      </td></tr>`;
+  } else if (type === 'empty') {
+    tb.innerHTML = `
+      <tr><td colspan="6">
+        <div class="empty">
+          <span class="empty-icon">📋</span>
+          <p>Nenhuma inspeção encontrada.</p>
+        </div>
+      </td></tr>`;
+  }
+  document.getElementById('page-info').textContent = '0 registros';
+}
+
+// ═══════════════════════════════════════════════════
+//  HELPERS DE RESPOSTA
+//  Calcula métricas a partir do array checklist_answer
+// ═══════════════════════════════════════════════════
+
+// Conta quantas respostas são false (bool_answ === false → "N.")
+function countN(checklist_answer) {
+  if (!Array.isArray(checklist_answer)) return 0;
+  return checklist_answer.filter(ca => ca.answer && ca.answer.bool_answ === false).length;
+}
+
+// Retorna classe e label do chip de N.
+function nChipClass(n) {
+  if (n === 0) return 'zero';
+  if (n <= 2)  return 'low';
+  return 'high';
+}
+
+// Status: conforme se nenhuma resposta for false
+function resolveStatus(checklist_answer) {
+  const n = countN(checklist_answer);
+  return n === 0
+    ? { cls: 'ok',   label: '✓ Conforme' }
+    : { cls: 'pend', label: `⚠ ${n} pendência${n > 1 ? 's' : ''}` };
+}
+
+// ═══════════════════════════════════════════════════
+//  RENDER TABLE
+// ═══════════════════════════════════════════════════
+function renderTable(rows) {
+  const tb = document.getElementById('tbody');
+
+  if (!rows.length) {
+    setTableState('empty');
+    updateStats([]);
+    return;
+  }
+
+  tb.innerHTML = rows.map((r, i) => {
+    const { date, time } = parseDateTime(r.dttime);
+
+    // Atração — lida a partir da primeira resposta do checklist
+    const attractionId = r.checklist_answer?.[0]?.answer?.question?.attraction ?? null;
+    const attr = ATTRACTION_MAP[attractionId] ?? ATTRACTION_MAP.default;
+
+    // Username
+    const username = r.users?.username || 'Operador';
+    const ini      = initials(username);
+
+    // Métricas calculadas a partir das respostas
+    const nCount          = countN(r.checklist_answer);
+    const chipCls         = nChipClass(nCount);
+    const { cls: stCls, label: stLabel } = resolveStatus(r.checklist_answer);
+
+    // Label do chip de N.: mostra contagem real
+    const nLabel = nCount === 0
+      ? '0 N.'
+      : `${nCount} N.`;
+
+    return `
+      <tr onclick="openRecord('${r.checklist_id}')" style="animation-delay:${0.04 * i}s">
+        <td>
+          <div class="attr-cell">
+            <div class="attr-icon" style="background:${attr.bg}">${attr.icon}</div>
+            <span class="attr-name">${attr.name}</span>
+          </div>
+        </td>
+        <td>
+          <div class="date-primary">${date}</div>
+          <div class="date-secondary">${time}</div>
+        </td>
+        <td>
+          <div class="user-cell">
+            <div class="avatar-sm">${ini}</div>
+            <span class="user-name">${username}</span>
+          </div>
+        </td>
+        <td>
+          <span class="n-chip ${chipCls}">${nLabel}</span>
+        </td>
+        <td>
+          <span class="status-chip ${stCls}">${stLabel}</span>
+        </td>
+        <td>
+          <button class="view-btn" onclick="event.stopPropagation();openRecord('${r.checklist_id}')">Ver</button>
+        </td>
+      </tr>`;
+  }).join('');
+
+  updateStats(rows);
+  document.getElementById('page-info').textContent =
+    `${rows.length} registro${rows.length !== 1 ? 's' : ''}`;
+}
+
+// ═══════════════════════════════════════════════════
+//  STATS — calculadas a partir das respostas reais
+// ═══════════════════════════════════════════════════
+function updateStats(rows) {
+  const todayStr   = new Date().toLocaleDateString('pt-BR');
+  const todayCount = rows.filter(r => parseDateTime(r.dttime).date === todayStr).length;
+
+  // Total de respostas e não-conformes em todos os checklists
+  let totalAnswers = 0;
+  let totalN       = 0;
+  rows.forEach(r => {
+    const answers = r.checklist_answer ?? [];
+    totalAnswers += answers.length;
+    totalN       += countN(answers);
+  });
+
+  const pct = totalAnswers > 0
+    ? Math.round(((totalAnswers - totalN) / totalAnswers) * 100)
+    : 100;
+
+  document.getElementById('stat-today').textContent = todayCount;
+  document.getElementById('stat-ok').textContent    = pct + '%';
+  document.getElementById('stat-n').textContent     = totalN;
+}
+
+// ═══════════════════════════════════════════════════
+//  FILTROS
+// ═══════════════════════════════════════════════════
+function filterTable() {
+  const search  = document.getElementById('search').value.toLowerCase();
+  const fAttr   = document.getElementById('f-attr').value;   // ex: "1" ou ""
+  const fStatus = document.getElementById('f-status').value; // "ok" | "pend" | ""
+
+  filtered = allRecords.filter(r => {
+    const username = (r.users?.username || '').toLowerCase();
+    const matchSearch = !search || username.includes(search);
+
+    // Atração: lida a partir da primeira resposta
+    const attractionId = String(r.checklist_answer?.[0]?.answer?.question?.attraction ?? '');
+    const matchAttr    = !fAttr || attractionId === fAttr;
+
+    // Status: calculado a partir das respostas
+    const n = countN(r.checklist_answer);
+    const matchStatus = !fStatus || (fStatus === 'ok' ? n === 0 : n > 0);
+
+    return matchSearch && matchAttr && matchStatus;
+  });
+
+  renderTable(filtered);
+}
+
+// ═══════════════════════════════════════════════════
+//  LOAD CHECKLISTS
+//  GET http://localhost:3000/getchecklists
+//  Resposta esperada: Array<{
+//    checklist_id : UUID,
+//    operator_id  : UUID,
+//    dttime       : TIMESTAMP WITH TIME ZONE,
+//    obs          : string | null,
+//    username?    : string   ← opcional, se o backend já fizer JOIN com Users
+//  }>
+// ═══════════════════════════════════════════════════
+async function loadChecklists() {
+  setTableState('loading');
+
+  try {
+    const res = await fetch(`${API_BASE}/getchecklists`, {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || `HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+
+    if (!Array.isArray(data)) throw new Error('Formato de resposta inválido.');
+
+    allRecords = data;
+    filtered   = [...allRecords];
+    renderTable(filtered);
+
+  } catch (err) {
+    console.error('Erro ao carregar checklists:', err);
+    setTableState('error', `Não foi possível carregar os dados.<br><small>${err.message}</small>`);
+    updateStats([]);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  AÇÕES (a implementar)
+// ═══════════════════════════════════════════════════
+function openRecord(checklist_id) {
+  window.location.href = `boia_dupla_view.html?checklist_id=${checklist_id}`;
+}
+
+function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+
+function openCreateOperator() { closeMenu(); window.location.href = 'create_operator.html'; }
+function openCreateQuestion()  { closeMenu(); window.location.href = 'create_question.html'; }
+function openViewQuestions()   { closeMenu(); window.location.href = 'view_questions.html'; }
+function openDeleteQuestion()  { closeMenu(); window.location.href = 'delete_question.html'; }
+
+function toggleMenu()  { document.getElementById('userMenu').classList.toggle('open'); }
+function closeMenu()   { document.getElementById('userMenu').classList.remove('open'); }
+
+document.addEventListener('click', e => {
+  if (!document.getElementById('userMenu').contains(e.target)) closeMenu();
+});
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+(function () {
+  const u = localStorage.getItem('username') || 'Supervisor';
+  document.getElementById('sv-name').textContent    = u;
+  document.getElementById('sv-avatar').textContent  = u.slice(0, 2).toUpperCase();
+  document.getElementById('drop-name').textContent  = u;
+
+  loadChecklists();
+})();
+</script>
+</body>
+</html>

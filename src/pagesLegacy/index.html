@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaPark — Entrar</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ocean: #0077b6;
+    --wave: #00b4d8;
+    --foam: #90e0ef;
+    --sand: #fdf6ec;
+    --coral: #f77f00;
+    --deep: #03045e;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    background: var(--deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Animated background */
+  .bg-waves {
+    position: fixed; inset: 0; z-index: 0;
+    background: linear-gradient(180deg, #03045e 0%, #0077b6 60%, #00b4d8 100%);
+  }
+
+  .wave-layer {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 200px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath d='M0,60 C200,120 400,0 600,60 C800,120 1000,0 1200,60 L1200,120 L0,120 Z' fill='%2390e0ef' opacity='0.15'/%3E%3C/svg%3E") repeat-x;
+    background-size: 1200px 200px;
+    animation: waveMove 8s linear infinite;
+  }
+  .wave-layer:nth-child(2) {
+    height: 160px;
+    opacity: 0.1;
+    animation: waveMove 5s linear infinite reverse;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath d='M0,80 C300,20 600,100 900,40 C1050,10 1150,80 1200,60 L1200,120 L0,120 Z' fill='%23ffffff'/%3E%3C/svg%3E");
+  }
+
+  @keyframes waveMove {
+    from { background-position-x: 0; }
+    to { background-position-x: 1200px; }
+  }
+
+  /* Bubbles */
+  .bubble {
+    position: fixed;
+    border-radius: 50%;
+    background: rgba(144,224,239,0.15);
+    border: 1px solid rgba(144,224,239,0.3);
+    animation: floatUp linear infinite;
+    pointer-events: none;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(110vh) scale(0.5); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 0.6; }
+    100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+  }
+
+  /* Card */
+  .card {
+    position: relative; z-index: 10;
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(144,224,239,0.25);
+    border-radius: 28px;
+    padding: 48px 44px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05) inset;
+    animation: fadeSlideIn 0.7s cubic-bezier(.22,.68,0,1.3) both;
+  }
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(40px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .logo {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .logo-icon {
+    font-size: 48px;
+    line-height: 1;
+    display: block;
+    filter: drop-shadow(0 4px 16px rgba(0,180,216,0.6));
+    animation: bob 3s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .logo h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.6rem;
+    letter-spacing: 4px;
+    color: var(--white);
+    margin-top: 6px;
+    text-shadow: 0 0 30px rgba(0,180,216,0.8);
+  }
+
+  .logo p {
+    font-size: 0.78rem;
+    color: var(--foam);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 2px;
+    opacity: 0.7;
+  }
+
+  .tab-row {
+    display: flex;
+    background: rgba(0,0,0,0.2);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 28px;
+    gap: 4px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 9px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    color: rgba(255,255,255,0.5);
+    background: transparent;
+    letter-spacing: 0.5px;
+  }
+  .tab-btn.active {
+    background: var(--wave);
+    color: var(--deep);
+    box-shadow: 0 4px 14px rgba(0,180,216,0.4);
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--foam);
+    margin-bottom: 7px;
+    opacity: 0.85;
+  }
+
+  input {
+    width: 100%;
+    padding: 13px 16px;
+    background: rgba(255,255,255,0.07);
+    border: 1.5px solid rgba(144,224,239,0.2);
+    border-radius: 12px;
+    color: var(--white);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  }
+  input::placeholder { color: rgba(255,255,255,0.3); }
+  input:focus {
+    border-color: var(--wave);
+    background: rgba(0,180,216,0.08);
+    box-shadow: 0 0 0 3px rgba(0,180,216,0.15);
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 15px;
+    margin-top: 8px;
+    background: linear-gradient(135deg, var(--wave), var(--ocean));
+    border: none;
+    border-radius: 14px;
+    color: var(--white);
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: transform 0.18s, box-shadow 0.18s, opacity 0.18s;
+    box-shadow: 0 6px 24px rgba(0,119,182,0.5);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 32px rgba(0,180,216,0.5);
+  }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  .error-msg {
+    background: rgba(255,80,80,0.15);
+    border: 1px solid rgba(255,80,80,0.35);
+    border-radius: 10px;
+    color: #ff8080;
+    font-size: 0.83rem;
+    font-weight: 600;
+    padding: 10px 14px;
+    margin-top: 14px;
+    display: none;
+    animation: shake 0.3s;
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+  .error-msg.show { display: block; }
+
+  .spinner {
+    display: inline-block;
+    width: 18px; height: 18px;
+    border: 2.5px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .divider {
+    text-align: center;
+    color: rgba(255,255,255,0.2);
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    margin: 20px 0 4px;
+  }
+
+  /* Panel visibility */
+  #panel-login, #panel-register { display: none; }
+  #panel-login.active, #panel-register.active { display: block; }
+
+  /* Success toast */
+  .toast {
+    position: fixed;
+    top: 24px; right: 24px;
+    background: linear-gradient(135deg, #00c48c, #00a870);
+    color: #fff;
+    padding: 14px 22px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    transform: translateX(200%);
+    transition: transform 0.4s cubic-bezier(.22,.68,0,1.3);
+    z-index: 999;
+  }
+  .toast.show { transform: translateX(0); }
+
+  @media (max-width: 480px) {
+    .card { padding: 36px 24px; margin: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-waves">
+  <div class="wave-layer"></div>
+  <div class="wave-layer"></div>
+</div>
+
+<!-- Bubbles -->
+<script>
+  (function() {
+    const sizes = [8,12,16,22,30,10,18];
+    const delays = [0,1,2,3,4,5,6,7,8,9];
+    for (let i = 0; i < 14; i++) {
+      const b = document.createElement('div');
+      b.className = 'bubble';
+      const s = sizes[i % sizes.length] + Math.random()*14;
+      b.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}%;
+        animation-duration:${7+Math.random()*10}s;
+        animation-delay:${Math.random()*10}s;`;
+      document.querySelector('.bg-waves').appendChild(b);
+    }
+  })();
+</script>
+
+<div class="card">
+  <div class="logo">
+    <span class="logo-icon">🌊</span>
+    <h1>ACQUAPARK</h1>
+    <p>Bem-vindo às águas</p>
+  </div>
+
+  <div class="tab-row">
+    <button class="tab-btn active" onclick="switchTab('login')">Entrar</button>
+    <button class="tab-btn" onclick="switchTab('register')">Criar Conta</button>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="panel-login" class="active">
+    <div class="form-group">
+      <label>E-mail</label>
+      <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label>Senha</label>
+      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn-primary" id="btn-login" onclick="doLogin()">ENTRAR</button>
+    <div class="error-msg" id="login-error"></div>
+  </div>
+
+  <!-- REGISTER -->
+  <div id="panel-register">
+    <div class="form-group">
+      <label>E-mail</label>
+      <input type="email" id="reg-email" placeholder="seu@email.com" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="reg-username" placeholder="seu_usuario" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label>Senha</label>
+      <input type="password" id="reg-password" placeholder="mínimo 6 caracteres" autocomplete="new-password">
+    </div>
+    <button class="btn-primary" id="btn-register" onclick="doRegister()">CRIAR CONTA</button>
+    <div class="error-msg" id="register-error"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach((b,i) => {
+      b.classList.toggle('active', (tab==='login'&&i===0)||(tab==='register'&&i===1));
+    });
+    document.getElementById('panel-login').classList.toggle('active', tab==='login');
+    document.getElementById('panel-register').classList.toggle('active', tab==='register');
+    clearErrors();
+  }
+
+  function clearErrors() {
+    document.querySelectorAll('.error-msg').forEach(e => e.classList.remove('show'));
+  }
+
+  function showError(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function setLoading(btnId, loading) {
+    const btn = document.getElementById(btnId);
+    if (loading) {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Aguarde...';
+    } else {
+      btn.disabled = false;
+      btn.innerHTML = btnId === 'btn-login' ? 'ENTRAR' : 'CRIAR CONTA';
+    }
+  }
+
+  async function doLogin() {
+    clearErrors();
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+
+    if (!email || !password) {
+      showError('login-error', 'Preencha todos os campos.');
+      return;
+    }
+
+    setLoading('btn-login', true);
+    try {
+      const res = await fetch('https://breathable-delma-claval.ngrok-free.dev/auth/signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.access_token) {
+        localStorage.setItem('jwt_token', data.access_token);
+
+        // Persist role returned by the backend (data.role or data.user?.role)
+        const role = data.u_type
+        localStorage.setItem('user_role', role);
+        console.log(role)
+        showToast('✅ Login realizado! Redirecionando...');
+        setTimeout(() => {
+          if (role === 2) {
+            window.location.href = 'supervisor.html';
+          } else {
+            window.location.href = 'dashboard.html';
+          }
+        }, 1200);
+      } else {
+        showError('login-error', data.message || 'E-mail ou senha inválidos.');
+      }
+    } catch (err) {
+      showError('login-error', 'Erro de conexão. Verifique o servidor.');
+    }
+    setLoading('btn-login', false);
+  }
+
+  async function doRegister() {
+    clearErrors();
+    const email    = document.getElementById('reg-email').value.trim();
+    const username = document.getElementById('reg-username').value.trim();
+    const password = document.getElementById('reg-password').value;
+
+    if (!email || !username || !password) {
+      showError('register-error', 'Preencha todos os campos.');
+      return;
+    }
+    if (password.length < 6) {
+      showError('register-error', 'A senha deve ter ao menos 6 caracteres.');
+      return;
+    }
+
+    setLoading('btn-register', true);
+    try {
+      const res = await fetch('https://breathable-delma-claval.ngrok-free.dev/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, username, password })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        showToast('🎉 Conta criada! Faça login.');
+        setTimeout(() => switchTab('login'), 1400);
+      } else {
+        showError('register-error', data.message || 'Erro ao criar conta.');
+      }
+    } catch (err) {
+      showError('register-error', 'Erro de conexão. Verifique o servidor.');
+    }
+    setLoading('btn-register', false);
+  }
+
+  // Enter key support
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    if (document.getElementById('panel-login').classList.contains('active')) doLogin();
+    else doRegister();
+  });
+</script>
+</body>
+</html>

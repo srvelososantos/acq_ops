@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaPark — Criar Pergunta</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0f14;--surface:#131820;--surface-2:#1a2030;
+  --border:rgba(255,255,255,0.07);--border-2:rgba(255,255,255,0.11);
+  --accent:#3b82f6;--accent-dim:rgba(59,130,246,0.10);
+  --text-1:#f0f4ff;--text-2:#8892a4;--text-3:#4a5568;
+  --green:#10b981;--red:#ef4444;--amber:#f59e0b;
+  --radius:10px;--radius-lg:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-1);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(59,130,246,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(59,130,246,0.025) 1px,transparent 1px);
+  background-size:48px 48px;pointer-events:none;
+}
+
+/* ── Card ── */
+.card{
+  position:relative;z-index:1;
+  width:100%;max-width:460px;margin:24px;
+  background:var(--surface);
+  border:1px solid var(--border-2);
+  border-radius:var(--radius-lg);
+  padding:36px 32px;
+  box-shadow:0 24px 64px rgba(0,0,0,0.6);
+  animation:slideUp .45s cubic-bezier(.22,.68,0,1) both;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Back link ── */
+.back-link{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.78rem;color:var(--text-3);
+  cursor:pointer;background:none;border:none;padding:0;
+  font-family:'DM Sans',sans-serif;margin-bottom:24px;
+  transition:color .2s;
+}
+.back-link:hover{color:var(--text-2);}
+
+/* ── Header ── */
+.card-header{margin-bottom:28px;}
+.card-header h2{
+  font-family:'Sora',sans-serif;
+  font-size:1.3rem;font-weight:700;color:var(--text-1);margin-bottom:4px;
+}
+.card-header p{font-size:.82rem;color:var(--text-2);font-weight:300;line-height:1.5;}
+
+.divider{height:1px;background:var(--border);margin:0 0 24px;}
+
+/* ── Table indicator ── */
+.table-indicator{
+  display:flex;align-items:center;gap:8px;
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:10px 13px;margin-bottom:20px;
+}
+.table-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+.table-text{font-size:.78rem;color:var(--text-2);}
+.table-text span{color:var(--accent);font-family:'DM Mono',monospace;font-size:.76rem;}
+
+/* ── Fields ── */
+.field{margin-bottom:18px;}
+label{
+  display:block;font-size:.7rem;font-weight:500;
+  letter-spacing:.8px;text-transform:uppercase;
+  color:var(--text-2);margin-bottom:6px;
+}
+
+/* shared input/select/textarea style */
+input, select, textarea{
+  width:100%;background:var(--surface-2);
+  border:1px solid var(--border-2);border-radius:var(--radius);
+  padding:10px 13px;
+  font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text-1);
+  outline:none;transition:border-color .2s,box-shadow .2s;
+}
+input::placeholder,textarea::placeholder{color:var(--text-3);}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);
+}
+
+/* Select arrow */
+select{
+  appearance:none;-webkit-appearance:none;
+  cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%234a5568'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 12px center;
+  padding-right:32px;
+}
+select option{background:#131820;color:var(--text-1);}
+select option:disabled{color:var(--text-3);}
+
+textarea{
+  resize:vertical;
+  min-height:90px;
+  line-height:1.5;
+}
+
+/* Field hint */
+.field-hint{
+  font-size:.7rem;color:var(--text-3);margin-top:5px;
+  font-family:'DM Mono',monospace;letter-spacing:.3px;
+}
+
+/* ── Button ── */
+.btn{
+  width:100%;padding:12px;margin-top:8px;
+  background:var(--accent);border:none;border-radius:var(--radius);
+  font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;
+  color:#fff;cursor:pointer;
+  transition:opacity .2s,transform .15s;letter-spacing:.3px;
+}
+.btn:hover{opacity:.88;}
+.btn:active{transform:scale(.98);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+
+/* ── Messages ── */
+.msg{
+  border-radius:var(--radius);padding:10px 13px;
+  font-size:.8rem;margin-top:14px;display:none;
+}
+.msg.error  {background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);color:#fca5a5;}
+.msg.success{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);color:#6ee7b7;}
+.msg.show{display:block;}
+
+/* ── Spinner ── */
+.spinner{
+  display:inline-block;width:14px;height:14px;
+  border:2px solid rgba(255,255,255,.3);border-top-color:#fff;
+  border-radius:50%;animation:spin .6s linear infinite;
+  vertical-align:middle;margin-right:6px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:480px){
+  .card{padding:28px 20px;margin:16px;}
+}
+</style>
+</head>
+<body>
+<script>
+  if(!localStorage.getItem('jwt_token'))window.location.href='index.html';
+  if(localStorage.getItem('user_role')!=='supervisor')window.location.href='dashboard.html';
+</script>
+
+<div class="card">
+  <button class="back-link" onclick="window.location.href='supervisor.html'">← Voltar ao painel</button>
+
+  <div class="card-header">
+    <h2>Criar nova pergunta</h2>
+    <p>Preencha os campos abaixo para adicionar uma pergunta ao checklist de uma atração.</p>
+  </div>
+  <div class="divider"></div>
+
+  <!-- <div class="table-indicator">
+    <div class="table-dot"></div>
+    <div class="table-text">Tabela de destino: <span>Question</span></div>
+  </div> -->
+
+  <!-- Campo: attraction (INTEGER no banco) -->
+  <div class="field">
+    <label>Atração</label>
+    <select id="attraction">
+      <option value="" disabled selected>Selecione uma atração...</option>
+      <option value="1">01 — Bóia Dupla</option>
+      <option value="2">02 — Rio Lento</option>
+      <option value="3">03 — Kids</option>
+      <option value="4">04 — Praia</option>
+      <option value="5">05 — Radicais</option>
+      <option value="6">06 — Moais</option>
+      <option value="7">07 — Octopus</option>
+      <option value="8">08 — Acquabar</option>
+    </select>
+    <!-- <div class="field-hint">attraction · INTEGER</div> -->
+  </div>
+
+    <!-- Campo: header_about_question (VARCHAR 64) -->
+  <div class="field">
+    <label>Agrupamento</label>
+    <select id="header_about_question">
+      <option value="" disabled selected>Selecione um agrupamento...</option>
+      <option value="Começo da atração">Começo da atração</option>
+      <option value="Meio da atração">Meio da atração</option>
+      <option value="Saída da atração">Saída da atração</option>
+      <option value="Outros">Outros</option>
+    </select>
+    <!-- <div class="field-hint">header_about_question · VARCHAR(64)</div> -->
+  </div>
+
+  <!-- Campo: question (VARCHAR 255) -->
+  <div class="field">
+    <label>Pergunta</label>
+    <textarea
+      id="question"
+      placeholder="Ex: Boias: Todas as boias estão calibradas, sem furos e limpas?"
+      maxlength="255"
+    ></textarea>
+    <!-- <div class="field-hint">question · VARCHAR(255)</div> -->
+  </div>
+
+  <button class="btn" id="btn-create" onclick="createQuestion()">Criar pergunta</button>
+  <div class="msg" id="msg"></div>
+</div>
+
+<script>
+const API_BASE = 'https://breathable-delma-claval.ngrok-free.dev';
+
+async function createQuestion() {
+  const attraction            = document.getElementById('attraction').value;
+  const question              = document.getElementById('question').value.trim();
+  const header_about_question = document.getElementById('header_about_question').value;
+  const msg = document.getElementById('msg');
+  const btn = document.getElementById('btn-create');
+
+  // Reset
+  msg.className = 'msg';
+  msg.textContent = '';
+
+  // Validação
+  if (!attraction) {
+    msg.textContent = 'Selecione uma atração.';
+    msg.className = 'msg error show'; return;
+  }
+  if (!question) {
+    msg.textContent = 'Digite o texto da pergunta.';
+    msg.className = 'msg error show'; return;
+  }
+  if (question.length > 255) {
+    msg.textContent = 'A pergunta deve ter no máximo 255 caracteres.';
+    msg.className = 'msg error show'; return;
+  }
+  if (!header_about_question) {
+    msg.textContent = 'Selecione um agrupamento.';
+    msg.className = 'msg error show'; return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Criando...';
+
+  try {
+    const res = await fetch(`${API_BASE}/createQuestion`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('jwt_token')
+      },
+      body: JSON.stringify({
+        attraction: parseInt(attraction, 10), // INTEGER no banco
+        question,
+        header_about_question
+      })
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (res.ok) {
+      msg.textContent = 'Pergunta criada com sucesso! Redirecionando...';
+      msg.className = 'msg success show';
+      setTimeout(() => window.location.href = 'supervisor.html', 1400);
+    } else {
+      msg.textContent = data.message || 'Erro ao criar pergunta.';
+      msg.className = 'msg error show';
+      btn.disabled = false;
+      btn.innerHTML = 'Criar pergunta';
+    }
+  } catch (err) {
+    msg.textContent = 'Erro de conexão com o servidor.';
+    msg.className = 'msg error show';
+    btn.disabled = false;
+    btn.innerHTML = 'Criar pergunta';
+  }
+}
+
+// Permite submeter com Enter (exceto no textarea)
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') createQuestion();
+});
+</script>
+</body>
+</html>

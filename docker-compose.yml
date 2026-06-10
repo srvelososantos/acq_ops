@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: acq_ops_local_db
+    restart: always
+    environment:
+      - POSTGRES_USER=meu_usuario
+      - POSTGRES_PASSWORD=minha_senha
+      - POSTGRES_DB=meu_banco  # O Docker cria este banco automaticamente
+    ports:
+      - "5432:5432"
+    volumes:
+      # Aqui está a mágica: ele copia o init.sql da sua máquina 
+      # para a pasta de inicialização do container
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
