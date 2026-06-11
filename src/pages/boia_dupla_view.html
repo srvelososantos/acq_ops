@@ -493,7 +493,7 @@ async function loadChecklist() {
     //                               question, header_about_question }>
     
     const attraction = resolveAttraction(answersWithQuestions[0].answer.question.attraction);
-
+    const pillUsername = resolveAttraction(answersWithQuestions[0].checklist.users.username);
     // Separar em questions[] e answers[] para o renderer
     const questions = answersWithQuestions.map(a => ({
       question_id:            a.answer.question.question_id,
@@ -514,14 +514,13 @@ async function loadChecklist() {
     document.getElementById('m-time').textContent =
       '🕐 ' + dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     document.getElementById('m-user').textContent =
-      '👤 ' + (checklist.username || checklist.users?.username || 'Operador');
-
+      '👤 ' + (answersWithQuestions[0].checklist.users.username);
+    
     // Observação geral do checklist
     const fo = document.getElementById('final-obs');
     fo.textContent = checklist.obs || '—';
     if (!checklist.obs) fo.style.opacity = '.35';
 
-    console.log(attraction)
     document.getElementById('main-title').textContent = "Lista de Inspeção Diária — " + attraction.name;
     // ── 4. Renderizar seções e perguntas ──
     renderSections(questions, answers);

@@ -34,9 +34,18 @@ export class ChecklistAnswersService{
             include: {
                 answer: {
                     include: {
-                        question: true
+                        question: true,
                     }
                 },
+                checklist:{
+                    include:{
+                        users: {
+                            select:{
+                                username: true
+                            }
+                        }
+                    }
+                }
             }
         })
     }

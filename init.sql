@@ -45,17 +45,17 @@ CREATE TABLE Checklist_Answer(
 
 INSERT INTO Users (usr_id, username, email, passwrd, u_type) VALUES
 ('744e17d6-8090-428a-a1b8-3f1266e92fcb', 'Floriosvaldo', 'gv@gmail.com', '$2a$12$B1FQg9mFdOs/ikw3JSv0n.f4yXWvJOhL0IQRRLMdr75rLcZEC6I16', 0), -- hashed password = 123456
-('89824014-8d5a-469f-bfb6-78d5e351401a', 'Admin', 'admin@gmail.com', '$2a$12$KeQBFqb.nE3R4KNB4Xnok.BahkO5dJOJr15xeOL.0hSUlVwdsj1FC', 1);   -- hashed password = 123456
+('89824014-8d5a-469f-bfb6-78d5e351401a', 'Pedro', 'pedro@gmail.com', '$2a$12$A4fxfWpH2z.96vj6nlSX5.CTA8rTKxarb2TRMwcCVDKMcFyKp/W8m', 1);   -- hashed password = 123456
 
 INSERT INTO Question (question_id, attraction, question, header_about_question) VALUES
-('a1b2c3d4-e5f6-7890-abcd-ef1234567801', 1, 'Boias: Todas as boias estão calibradas, sem furos e limpas?', 'ENTRADA DA ATRAÇÃO'),
+('a1b2c3d4-e5f6-7890-abcd-ef1234567801', 1, 'Bóias: Todas as bóias estão calibradas, sem furos e limpas?', 'ENTRADA DA ATRAÇÃO'),
 ('a1b2c3d4-e5f6-7890-abcd-ef1234567802', 1, 'Placas: Regras e altura encontram-se instaladas e com informações visíveis?', 'ENTRADA DA ATRAÇÃO'),
 ('a1b2c3d4-e5f6-7890-abcd-ef1234567803', 1, 'Balança ligada?', 'ENTRADA DA ATRAÇÃO'),
 
 ('a1b2c3d4-e5f6-7890-abcd-ef1234567804', 1, 'Degraus e guardas corpos da escadas e plataforma: Encontram-se fixos e firmes?', 'ESCADAS E PLATAFORMA'),
-('a1b2c3d4-e5f6-7890-abcd-ef1234567805', 1, 'Sistema de içamento de boia: eixo de rotação segue sem travamento e está bem lubrificado?', 'ESCADAS E PLATAFORMA'),
-('a1b2c3d4-e5f6-7890-abcd-ef1234567806', 1, 'Sistema de içamento de boia: os botões encontram-se pronto para uso e sem irregularidade?', 'ESCADAS E PLATAFORMA'),
-('a1b2c3d4-e5f6-7890-abcd-ef1234567807', 1, 'Sistema de içamento de boia: cabos encontra-se sem ferrugens e funciona corretamente?', 'ESCADAS E PLATAFORMA'),
+('a1b2c3d4-e5f6-7890-abcd-ef1234567805', 1, 'Sistema de içamento de bóia: eixo de rotação segue sem travamento e está bem lubrificado?', 'ESCADAS E PLATAFORMA'),
+('a1b2c3d4-e5f6-7890-abcd-ef1234567806', 1, 'Sistema de içamento de bóia: os botões encontram-se pronto para uso e sem irregularidade?', 'ESCADAS E PLATAFORMA'),
+('a1b2c3d4-e5f6-7890-abcd-ef1234567807', 1, 'Sistema de içamento de bóia: cabos encontra-se sem ferrugens e funciona corretamente?', 'ESCADAS E PLATAFORMA'),
 ('a1b2c3d4-e5f6-7890-abcd-ef1234567808', 1, 'Placas: Régua de altura, regras e proibido acessórios: Encontra-se instaladas e com informações visíveis? (Torre)', 'ESCADAS E PLATAFORMA'),
 
 ('a1b2c3d4-e5f6-7890-abcd-ef1234567809', 1, 'Entrada do escorregador PENDULO: Sem avarias, trincados, rachados ou pontas que possam machucar?', 'ESCORREGADORES, ENTRADAS, PERCURSO E CHEGADA'),
@@ -76,7 +76,7 @@ INSERT INTO Question (question_id, attraction, question, header_about_question) 
 INSERT INTO Question (question_id, attraction, question, header_about_question) VALUES
 ('e5f6a7b8-c9d0-1234-efab-345678900001', 2, 'Placa: Informações e regras encontram-se instaladas e com informações visíveis?', 'ENTRADA 01 - RIO 01 LADO RACK DE BOIAS'),
 ('e5f6a7b8-c9d0-1234-efab-345678900002', 2, 'Degraus, corrimão e bordas estão fixos e sem pontas que possam machucar?', 'ENTRADA 01 - RIO 01 LADO RACK DE BOIAS'),
-('e5f6a7b8-c9d0-1234-efab-345678900003', 2, 'Racks de boias estão fixos e sem pontas que possam machucar? Estado da pintura sem pontos de ferrugem?', 'ENTRADA 01 - RIO 01 LADO RACK DE BOIAS'),
+('e5f6a7b8-c9d0-1234-efab-345678900003', 2, 'Racks de bóias estão fixos e sem pontas que possam machucar? Estado da pintura sem pontos de ferrugem?', 'ENTRADA 01 - RIO 01 LADO RACK DE BOIAS'),
 ('e5f6a7b8-c9d0-1234-efab-345678900004', 2, 'Cordinhas das entradas encontram-se em boas condições de uso?', 'ENTRADA 01 - RIO 01 LADO RACK DE BOIAS'),
 ('e5f6a7b8-c9d0-1234-efab-345678900005', 2, 'Bordas e ralos das piscinas encontram-se sem pontas que possam machucar?', 'ENTRADA 01 - RIO 01 LADO RACK DE BOIAS'),
 
@@ -87,7 +87,7 @@ INSERT INTO Question (question_id, attraction, question, header_about_question) 
 
 ('e5f6a7b8-c9d0-1234-efab-345678900010', 2, 'Placa: Informações e regras encontram-se instaladas e com informações visíveis?', 'ENTRADA 03 - PRÓXIMO À HAMBURGUERIA'),
 ('e5f6a7b8-c9d0-1234-efab-345678900011', 2, 'Degraus, corrimão e bordas estão fixos e sem pontas que possam machucar?', 'ENTRADA 03 - PRÓXIMO À HAMBURGUERIA'),
-('e5f6a7b8-c9d0-1234-efab-345678900012', 2, 'Racks de boias estão fixos e sem pontas que possam machucar? Estado da pintura sem pontos de ferrugem?', 'ENTRADA 03 - PRÓXIMO À HAMBURGUERIA'),
+('e5f6a7b8-c9d0-1234-efab-345678900012', 2, 'Racks de bóias estão fixos e sem pontas que possam machucar? Estado da pintura sem pontos de ferrugem?', 'ENTRADA 03 - PRÓXIMO À HAMBURGUERIA'),
 ('e5f6a7b8-c9d0-1234-efab-345678900013', 2, 'Cordinhas das entradas encontram-se em boas condições de uso?', 'ENTRADA 03 - PRÓXIMO À HAMBURGUERIA'),
 ('e5f6a7b8-c9d0-1234-efab-345678900014', 2, 'Bordas e ralos das piscinas encontram-se sem pontas que possam machucar?', 'ENTRADA 03 - PRÓXIMO À HAMBURGUERIA'),
 ('e5f6a7b8-c9d0-1234-efab-345678900015', 2, 'Verificar ponte: cascatas com a vazão adequada de água?', 'ENTRADA 03 - PRÓXIMO À HAMBURGUERIA'),
@@ -96,10 +96,10 @@ INSERT INTO Question (question_id, attraction, question, header_about_question) 
 ('e5f6a7b8-c9d0-1234-efab-345678900017', 2, 'Cordinhas das entradas encontram-se em boas condições de uso?', 'ENTRADA 04 - ACESSO AO DAYBED'),
 ('e5f6a7b8-c9d0-1234-efab-345678900018', 2, 'Bordas e ralos das piscinas encontram-se sem pontas que possam machucar?', 'ENTRADA 04 - ACESSO AO DAYBED'),
 
-('e5f6a7b8-c9d0-1234-efab-345678900019', 2, 'Degraus, corrimão e bordas estão fixos e sem pontas que possam machucar?', 'ENTRADA 05 - RESTAURANTE YAMAMA'),
-('e5f6a7b8-c9d0-1234-efab-345678900020', 2, 'Racks de boias estão fixos e sem pontas que possam machucar? Estado da pintura sem pontos de ferrugem?', 'ENTRADA 05 - RESTAURANTE YAMAMA'),
-('e5f6a7b8-c9d0-1234-efab-345678900021', 2, 'Cordinhas das entradas encontram-se em boas condições de uso?', 'ENTRADA 05 - RESTAURANTE YAMAMA'),
-('e5f6a7b8-c9d0-1234-efab-345678900022', 2, 'Bordas e ralos das piscinas encontram-se sem pontas que possam machucar?', 'ENTRADA 05 - RESTAURANTE YAMAMA'),
+('e5f6a7b8-c9d0-1234-efab-345678900019', 2, 'Degraus, corrimão e bordas estão fixos e sem pontas que possam machucar?', 'ENTRADA 05 - RESTAURANTE YAMANÁ'),
+('e5f6a7b8-c9d0-1234-efab-345678900020', 2, 'Racks de bóias estão fixos e sem pontas que possam machucar? Estado da pintura sem pontos de ferrugem?', 'ENTRADA 05 - RESTAURANTE YAMANÁ'),
+('e5f6a7b8-c9d0-1234-efab-345678900021', 2, 'Cordinhas das entradas encontram-se em boas condições de uso?', 'ENTRADA 05 - RESTAURANTE YAMANÁ'),
+('e5f6a7b8-c9d0-1234-efab-345678900022', 2, 'Bordas e ralos das piscinas encontram-se sem pontas que possam machucar?', 'ENTRADA 05 - RESTAURANTE YAMANÁ'),
 
 ('e5f6a7b8-c9d0-1234-efab-345678900023', 2, 'Degraus, corrimão e bordas estão fixos e sem pontas que possam machucar?', 'ENTRADA 06 - RIO 11 LOUNGE BAR'),
 ('e5f6a7b8-c9d0-1234-efab-345678900024', 2, 'Cordinhas das entradas encontram-se em boas condições de uso?', 'ENTRADA 06 - RIO 11 LOUNGE BAR'),

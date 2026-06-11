@@ -39,6 +39,7 @@ export type QuestionMinAggregateOutputType = {
   attraction: number | null
   question: string | null
   header_about_question: string | null
+  icon_key: string | null
   isdeleted: boolean | null
 }
 
@@ -47,6 +48,7 @@ export type QuestionMaxAggregateOutputType = {
   attraction: number | null
   question: string | null
   header_about_question: string | null
+  icon_key: string | null
   isdeleted: boolean | null
 }
 
@@ -55,6 +57,7 @@ export type QuestionCountAggregateOutputType = {
   attraction: number
   question: number
   header_about_question: number
+  icon_key: number
   isdeleted: number
   _all: number
 }
@@ -73,6 +76,7 @@ export type QuestionMinAggregateInputType = {
   attraction?: true
   question?: true
   header_about_question?: true
+  icon_key?: true
   isdeleted?: true
 }
 
@@ -81,6 +85,7 @@ export type QuestionMaxAggregateInputType = {
   attraction?: true
   question?: true
   header_about_question?: true
+  icon_key?: true
   isdeleted?: true
 }
 
@@ -89,6 +94,7 @@ export type QuestionCountAggregateInputType = {
   attraction?: true
   question?: true
   header_about_question?: true
+  icon_key?: true
   isdeleted?: true
   _all?: true
 }
@@ -184,6 +190,7 @@ export type QuestionGroupByOutputType = {
   attraction: number | null
   question: string | null
   header_about_question: string | null
+  icon_key: string | null
   isdeleted: boolean | null
   _count: QuestionCountAggregateOutputType | null
   _avg: QuestionAvgAggregateOutputType | null
@@ -215,6 +222,7 @@ export type questionWhereInput = {
   attraction?: Prisma.IntNullableFilter<"question"> | number | null
   question?: Prisma.StringNullableFilter<"question"> | string | null
   header_about_question?: Prisma.StringNullableFilter<"question"> | string | null
+  icon_key?: Prisma.StringNullableFilter<"question"> | string | null
   isdeleted?: Prisma.BoolNullableFilter<"question"> | boolean | null
   answer?: Prisma.AnswerListRelationFilter
 }
@@ -224,6 +232,7 @@ export type questionOrderByWithRelationInput = {
   attraction?: Prisma.SortOrderInput | Prisma.SortOrder
   question?: Prisma.SortOrderInput | Prisma.SortOrder
   header_about_question?: Prisma.SortOrderInput | Prisma.SortOrder
+  icon_key?: Prisma.SortOrderInput | Prisma.SortOrder
   isdeleted?: Prisma.SortOrderInput | Prisma.SortOrder
   answer?: Prisma.answerOrderByRelationAggregateInput
 }
@@ -236,6 +245,7 @@ export type questionWhereUniqueInput = Prisma.AtLeast<{
   attraction?: Prisma.IntNullableFilter<"question"> | number | null
   question?: Prisma.StringNullableFilter<"question"> | string | null
   header_about_question?: Prisma.StringNullableFilter<"question"> | string | null
+  icon_key?: Prisma.StringNullableFilter<"question"> | string | null
   isdeleted?: Prisma.BoolNullableFilter<"question"> | boolean | null
   answer?: Prisma.AnswerListRelationFilter
 }, "question_id">
@@ -245,6 +255,7 @@ export type questionOrderByWithAggregationInput = {
   attraction?: Prisma.SortOrderInput | Prisma.SortOrder
   question?: Prisma.SortOrderInput | Prisma.SortOrder
   header_about_question?: Prisma.SortOrderInput | Prisma.SortOrder
+  icon_key?: Prisma.SortOrderInput | Prisma.SortOrder
   isdeleted?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.questionCountOrderByAggregateInput
   _avg?: Prisma.questionAvgOrderByAggregateInput
@@ -261,6 +272,7 @@ export type questionScalarWhereWithAggregatesInput = {
   attraction?: Prisma.IntNullableWithAggregatesFilter<"question"> | number | null
   question?: Prisma.StringNullableWithAggregatesFilter<"question"> | string | null
   header_about_question?: Prisma.StringNullableWithAggregatesFilter<"question"> | string | null
+  icon_key?: Prisma.StringNullableWithAggregatesFilter<"question"> | string | null
   isdeleted?: Prisma.BoolNullableWithAggregatesFilter<"question"> | boolean | null
 }
 
@@ -269,6 +281,7 @@ export type questionCreateInput = {
   attraction?: number | null
   question?: string | null
   header_about_question?: string | null
+  icon_key?: string | null
   isdeleted?: boolean | null
   answer?: Prisma.answerCreateNestedManyWithoutQuestionInput
 }
@@ -278,6 +291,7 @@ export type questionUncheckedCreateInput = {
   attraction?: number | null
   question?: string | null
   header_about_question?: string | null
+  icon_key?: string | null
   isdeleted?: boolean | null
   answer?: Prisma.answerUncheckedCreateNestedManyWithoutQuestionInput
 }
@@ -287,6 +301,7 @@ export type questionUpdateInput = {
   attraction?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   question?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   header_about_question?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  icon_key?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isdeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   answer?: Prisma.answerUpdateManyWithoutQuestionNestedInput
 }
@@ -296,6 +311,7 @@ export type questionUncheckedUpdateInput = {
   attraction?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   question?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   header_about_question?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  icon_key?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isdeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   answer?: Prisma.answerUncheckedUpdateManyWithoutQuestionNestedInput
 }
@@ -305,6 +321,7 @@ export type questionCreateManyInput = {
   attraction?: number | null
   question?: string | null
   header_about_question?: string | null
+  icon_key?: string | null
   isdeleted?: boolean | null
 }
 
@@ -313,6 +330,7 @@ export type questionUpdateManyMutationInput = {
   attraction?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   question?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   header_about_question?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  icon_key?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isdeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
 }
 
@@ -321,6 +339,7 @@ export type questionUncheckedUpdateManyInput = {
   attraction?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   question?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   header_about_question?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  icon_key?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isdeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
 }
 
@@ -329,6 +348,7 @@ export type questionCountOrderByAggregateInput = {
   attraction?: Prisma.SortOrder
   question?: Prisma.SortOrder
   header_about_question?: Prisma.SortOrder
+  icon_key?: Prisma.SortOrder
   isdeleted?: Prisma.SortOrder
 }
 
@@ -341,6 +361,7 @@ export type questionMaxOrderByAggregateInput = {
   attraction?: Prisma.SortOrder
   question?: Prisma.SortOrder
   header_about_question?: Prisma.SortOrder
+  icon_key?: Prisma.SortOrder
   isdeleted?: Prisma.SortOrder
 }
 
@@ -349,6 +370,7 @@ export type questionMinOrderByAggregateInput = {
   attraction?: Prisma.SortOrder
   question?: Prisma.SortOrder
   header_about_question?: Prisma.SortOrder
+  icon_key?: Prisma.SortOrder
   isdeleted?: Prisma.SortOrder
 }
 
@@ -367,10 +389,6 @@ export type NullableIntFieldUpdateOperationsInput = {
   decrement?: number
   multiply?: number
   divide?: number
-}
-
-export type NullableBoolFieldUpdateOperationsInput = {
-  set?: boolean | null
 }
 
 export type questionCreateNestedOneWithoutAnswerInput = {
@@ -394,6 +412,7 @@ export type questionCreateWithoutAnswerInput = {
   attraction?: number | null
   question?: string | null
   header_about_question?: string | null
+  icon_key?: string | null
   isdeleted?: boolean | null
 }
 
@@ -402,6 +421,7 @@ export type questionUncheckedCreateWithoutAnswerInput = {
   attraction?: number | null
   question?: string | null
   header_about_question?: string | null
+  icon_key?: string | null
   isdeleted?: boolean | null
 }
 
@@ -426,6 +446,7 @@ export type questionUpdateWithoutAnswerInput = {
   attraction?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   question?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   header_about_question?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  icon_key?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isdeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
 }
 
@@ -434,6 +455,7 @@ export type questionUncheckedUpdateWithoutAnswerInput = {
   attraction?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   question?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   header_about_question?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  icon_key?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isdeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
 }
 
@@ -473,6 +495,7 @@ export type questionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   attraction?: boolean
   question?: boolean
   header_about_question?: boolean
+  icon_key?: boolean
   isdeleted?: boolean
   answer?: boolean | Prisma.question$answerArgs<ExtArgs>
   _count?: boolean | Prisma.QuestionCountOutputTypeDefaultArgs<ExtArgs>
@@ -483,6 +506,7 @@ export type questionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   attraction?: boolean
   question?: boolean
   header_about_question?: boolean
+  icon_key?: boolean
   isdeleted?: boolean
 }, ExtArgs["result"]["question"]>
 
@@ -491,6 +515,7 @@ export type questionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   attraction?: boolean
   question?: boolean
   header_about_question?: boolean
+  icon_key?: boolean
   isdeleted?: boolean
 }, ExtArgs["result"]["question"]>
 
@@ -499,10 +524,11 @@ export type questionSelectScalar = {
   attraction?: boolean
   question?: boolean
   header_about_question?: boolean
+  icon_key?: boolean
   isdeleted?: boolean
 }
 
-export type questionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"question_id" | "attraction" | "question" | "header_about_question" | "isdeleted", ExtArgs["result"]["question"]>
+export type questionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"question_id" | "attraction" | "question" | "header_about_question" | "icon_key" | "isdeleted", ExtArgs["result"]["question"]>
 export type questionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   answer?: boolean | Prisma.question$answerArgs<ExtArgs>
   _count?: boolean | Prisma.QuestionCountOutputTypeDefaultArgs<ExtArgs>
@@ -520,6 +546,7 @@ export type $questionPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     attraction: number | null
     question: string | null
     header_about_question: string | null
+    icon_key: string | null
     isdeleted: boolean | null
   }, ExtArgs["result"]["question"]>
   composites: {}
@@ -949,6 +976,7 @@ export interface questionFieldRefs {
   readonly attraction: Prisma.FieldRef<"question", 'Int'>
   readonly question: Prisma.FieldRef<"question", 'String'>
   readonly header_about_question: Prisma.FieldRef<"question", 'String'>
+  readonly icon_key: Prisma.FieldRef<"question", 'String'>
   readonly isdeleted: Prisma.FieldRef<"question", 'Boolean'>
 }
     

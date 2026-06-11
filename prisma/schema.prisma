@@ -12,6 +12,7 @@ model checklist {
   operator_id      String?            @db.Uuid
   dttime           DateTime?          @default(now()) @db.Timestamptz(6)
   obs              String?            @db.VarChar(255)
+  is_archived      Boolean?
   users            users?             @relation(fields: [operator_id], references: [usr_id], onDelete: NoAction, onUpdate: NoAction)
   checklist_answer checklist_answer[]
 }
@@ -28,6 +29,7 @@ model question {
   attraction            Int?
   question              String?  @db.VarChar(255)
   header_about_question String?  @db.VarChar(64)
+  icon_key              String?  @db.VarChar(32)
   isdeleted             Boolean? @default(false)
   answer                answer[]
 }

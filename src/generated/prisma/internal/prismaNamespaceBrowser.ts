@@ -79,7 +79,8 @@ export const ChecklistScalarFieldEnum = {
   checklist_id: 'checklist_id',
   operator_id: 'operator_id',
   dttime: 'dttime',
-  obs: 'obs'
+  obs: 'obs',
+  is_archived: 'is_archived'
 } as const
 
 export type ChecklistScalarFieldEnum = (typeof ChecklistScalarFieldEnum)[keyof typeof ChecklistScalarFieldEnum]
@@ -99,6 +100,7 @@ export const QuestionScalarFieldEnum = {
   attraction: 'attraction',
   question: 'question',
   header_about_question: 'header_about_question',
+  icon_key: 'icon_key',
   isdeleted: 'isdeleted'
 } as const
 

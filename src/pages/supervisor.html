@@ -279,7 +279,7 @@ td:first-child{padding-left:20px;}
     <div class="dropdown">
       <div class="drop-header">
         <div class="drop-name" id="drop-name">Supervisor</div>
-        <div class="drop-role">SUPERVISOR · AquaPark</div>
+        <!-- <div class="drop-role">SUPERVISOR · AquaPark</div> -->
       </div>
       <button class="drop-item" onclick="openCreateOperator()">
         <span class="drop-icon">➕</span> Criar novo operador
@@ -306,7 +306,7 @@ td:first-child{padding-left:20px;}
     <div class="stat"><div class="stat-val blue" id="stat-today">—</div><div class="stat-label">Inspeções hoje</div></div>
     <div class="stat"><div class="stat-val green" id="stat-ok">—%</div><div class="stat-label">Conformidade</div></div>
     <div class="stat"><div class="stat-val red" id="stat-n">—</div><div class="stat-label">Não conformes</div></div>
-    <div class="stat"><div class="stat-val amber">1</div><div class="stat-label">Atrações ativas</div></div>
+    <div class="stat"><div class="stat-val amber">9</div><div class="stat-label">Atrações ativas</div></div>
   </div>
 
   <div class="toolbar">
@@ -317,15 +317,15 @@ td:first-child{padding-left:20px;}
         <input class="search-input" type="text" placeholder="Buscar inspetor..." id="search" oninput="filterTable()">
       </div>
       <select class="filter" id="f-attr" onchange="filterTable()">
-        <option value="">Todas as atrações</option>
         <option value="1">Bóia Dupla</option>
         <option value="2">Rio Lento</option>
         <option value="3">Kids</option>
-        <option value="4">Praia</option>
+        <option value="4">Praia e Acquabar</option>
         <option value="5">Radicais</option>
         <option value="6">Moais</option>
         <option value="7">Octopus</option>
-        <option value="8">Acquabar</option>
+        <option value="8">Acquababy</option>
+        <option value="9">Daybed</option>
       </select>
       <select class="filter" id="f-status" onchange="filterTable()">
         <option value="">Todos</option>

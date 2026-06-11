@@ -45,7 +45,7 @@ body::before{
 /* ── Back link ── */
 .back-link{
   display:inline-flex;align-items:center;gap:6px;
-  font-size:.78rem;color:var(--text-3);
+  font-size:1.1rem;color:var(--text-3);
   cursor:pointer;background:none;border:none;padding:0;
   font-family:'DM Sans',sans-serif;margin-bottom:24px;transition:color .2s;
 }
@@ -244,16 +244,17 @@ select option:disabled{color:var(--text-3);}
     <label>Atração</label>
     <select id="attraction-select" onchange="onAttractionChange()">
       <option value="" disabled selected>Selecione uma atração...</option>
-      <option value="1">01 — Bóia Dupla</option>
-      <option value="2">02 — Rio Lento</option>
-      <option value="3">03 — Kids</option>
-      <option value="4">04 — Praia</option>
-      <option value="5">05 — Radicais</option>
-      <option value="6">06 — Moais</option>
-      <option value="7">07 — Octopus</option>
-      <option value="8">08 — Acquabar</option>
+      <option value="1">Bóia Dupla</option>
+      <option value="2">Rio Lento</option>
+      <option value="3">Kids</option>
+      <option value="4">Praia e Acquabar</option>
+      <option value="5">Radicais</option>
+      <option value="6">Moais</option>
+      <option value="7">Octopus</option>
+      <option value="8">Acquababy</option>
+      <option value="9">Daybed</option>
     </select>
-    <div class="field-hint">GET /getquestions?attraction={id}</div>
+    
   </div>
 
   <!-- Painel de perguntas (aparece após carregar) -->
@@ -388,7 +389,7 @@ function renderGroups(questions) {
         <div class="q-body">
           <div class="q-header-tag">${escHtml(header)}</div>
           <div class="q-text">${escHtml(q.question)}</div>
-          <div class="q-id">${q.question_id}</div>
+          
         </div>
       </div>`).join('');
 

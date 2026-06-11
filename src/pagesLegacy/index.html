@@ -412,7 +412,7 @@
         // Persist role returned by the backend (data.role or data.user?.role)
         const role = data.u_type
         localStorage.setItem('user_role', role);
-        console.log(role)
+
         showToast('✅ Login realizado! Redirecionando...');
         setTimeout(() => {
           if (role === 2) {

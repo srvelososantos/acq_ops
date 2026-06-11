@@ -896,7 +896,8 @@ export const ChecklistScalarFieldEnum = {
   checklist_id: 'checklist_id',
   operator_id: 'operator_id',
   dttime: 'dttime',
-  obs: 'obs'
+  obs: 'obs',
+  is_archived: 'is_archived'
 } as const
 
 export type ChecklistScalarFieldEnum = (typeof ChecklistScalarFieldEnum)[keyof typeof ChecklistScalarFieldEnum]
@@ -916,6 +917,7 @@ export const QuestionScalarFieldEnum = {
   attraction: 'attraction',
   question: 'question',
   header_about_question: 'header_about_question',
+  icon_key: 'icon_key',
   isdeleted: 'isdeleted'
 } as const
 
@@ -1011,6 +1013,13 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
 
 
 /**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
  * Reference to a field of type 'Int'
  */
 export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -1035,13 +1044,6 @@ export type BytesFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, '
  * Reference to a field of type 'Bytes[]'
  */
 export type ListBytesFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Bytes[]'>
-    
-
-
-/**
- * Reference to a field of type 'Boolean'
- */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 

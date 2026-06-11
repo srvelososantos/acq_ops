@@ -29,6 +29,7 @@ export type ChecklistMinAggregateOutputType = {
   operator_id: string | null
   dttime: Date | null
   obs: string | null
+  is_archived: boolean | null
 }
 
 export type ChecklistMaxAggregateOutputType = {
@@ -36,6 +37,7 @@ export type ChecklistMaxAggregateOutputType = {
   operator_id: string | null
   dttime: Date | null
   obs: string | null
+  is_archived: boolean | null
 }
 
 export type ChecklistCountAggregateOutputType = {
@@ -43,6 +45,7 @@ export type ChecklistCountAggregateOutputType = {
   operator_id: number
   dttime: number
   obs: number
+  is_archived: number
   _all: number
 }
 
@@ -52,6 +55,7 @@ export type ChecklistMinAggregateInputType = {
   operator_id?: true
   dttime?: true
   obs?: true
+  is_archived?: true
 }
 
 export type ChecklistMaxAggregateInputType = {
@@ -59,6 +63,7 @@ export type ChecklistMaxAggregateInputType = {
   operator_id?: true
   dttime?: true
   obs?: true
+  is_archived?: true
 }
 
 export type ChecklistCountAggregateInputType = {
@@ -66,6 +71,7 @@ export type ChecklistCountAggregateInputType = {
   operator_id?: true
   dttime?: true
   obs?: true
+  is_archived?: true
   _all?: true
 }
 
@@ -146,6 +152,7 @@ export type ChecklistGroupByOutputType = {
   operator_id: string | null
   dttime: Date | null
   obs: string | null
+  is_archived: boolean | null
   _count: ChecklistCountAggregateOutputType | null
   _min: ChecklistMinAggregateOutputType | null
   _max: ChecklistMaxAggregateOutputType | null
@@ -174,6 +181,7 @@ export type checklistWhereInput = {
   operator_id?: Prisma.UuidNullableFilter<"checklist"> | string | null
   dttime?: Prisma.DateTimeNullableFilter<"checklist"> | Date | string | null
   obs?: Prisma.StringNullableFilter<"checklist"> | string | null
+  is_archived?: Prisma.BoolNullableFilter<"checklist"> | boolean | null
   users?: Prisma.XOR<Prisma.UsersNullableScalarRelationFilter, Prisma.usersWhereInput> | null
   checklist_answer?: Prisma.Checklist_answerListRelationFilter
 }
@@ -183,6 +191,7 @@ export type checklistOrderByWithRelationInput = {
   operator_id?: Prisma.SortOrderInput | Prisma.SortOrder
   dttime?: Prisma.SortOrderInput | Prisma.SortOrder
   obs?: Prisma.SortOrderInput | Prisma.SortOrder
+  is_archived?: Prisma.SortOrderInput | Prisma.SortOrder
   users?: Prisma.usersOrderByWithRelationInput
   checklist_answer?: Prisma.checklist_answerOrderByRelationAggregateInput
 }
@@ -195,6 +204,7 @@ export type checklistWhereUniqueInput = Prisma.AtLeast<{
   operator_id?: Prisma.UuidNullableFilter<"checklist"> | string | null
   dttime?: Prisma.DateTimeNullableFilter<"checklist"> | Date | string | null
   obs?: Prisma.StringNullableFilter<"checklist"> | string | null
+  is_archived?: Prisma.BoolNullableFilter<"checklist"> | boolean | null
   users?: Prisma.XOR<Prisma.UsersNullableScalarRelationFilter, Prisma.usersWhereInput> | null
   checklist_answer?: Prisma.Checklist_answerListRelationFilter
 }, "checklist_id">
@@ -204,6 +214,7 @@ export type checklistOrderByWithAggregationInput = {
   operator_id?: Prisma.SortOrderInput | Prisma.SortOrder
   dttime?: Prisma.SortOrderInput | Prisma.SortOrder
   obs?: Prisma.SortOrderInput | Prisma.SortOrder
+  is_archived?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.checklistCountOrderByAggregateInput
   _max?: Prisma.checklistMaxOrderByAggregateInput
   _min?: Prisma.checklistMinOrderByAggregateInput
@@ -217,12 +228,14 @@ export type checklistScalarWhereWithAggregatesInput = {
   operator_id?: Prisma.UuidNullableWithAggregatesFilter<"checklist"> | string | null
   dttime?: Prisma.DateTimeNullableWithAggregatesFilter<"checklist"> | Date | string | null
   obs?: Prisma.StringNullableWithAggregatesFilter<"checklist"> | string | null
+  is_archived?: Prisma.BoolNullableWithAggregatesFilter<"checklist"> | boolean | null
 }
 
 export type checklistCreateInput = {
   checklist_id?: string
   dttime?: Date | string | null
   obs?: string | null
+  is_archived?: boolean | null
   users?: Prisma.usersCreateNestedOneWithoutChecklistInput
   checklist_answer?: Prisma.checklist_answerCreateNestedManyWithoutChecklistInput
 }
@@ -232,6 +245,7 @@ export type checklistUncheckedCreateInput = {
   operator_id?: string | null
   dttime?: Date | string | null
   obs?: string | null
+  is_archived?: boolean | null
   checklist_answer?: Prisma.checklist_answerUncheckedCreateNestedManyWithoutChecklistInput
 }
 
@@ -239,6 +253,7 @@ export type checklistUpdateInput = {
   checklist_id?: Prisma.StringFieldUpdateOperationsInput | string
   dttime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   obs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_archived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   users?: Prisma.usersUpdateOneWithoutChecklistNestedInput
   checklist_answer?: Prisma.checklist_answerUpdateManyWithoutChecklistNestedInput
 }
@@ -248,6 +263,7 @@ export type checklistUncheckedUpdateInput = {
   operator_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dttime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   obs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_archived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   checklist_answer?: Prisma.checklist_answerUncheckedUpdateManyWithoutChecklistNestedInput
 }
 
@@ -256,12 +272,14 @@ export type checklistCreateManyInput = {
   operator_id?: string | null
   dttime?: Date | string | null
   obs?: string | null
+  is_archived?: boolean | null
 }
 
 export type checklistUpdateManyMutationInput = {
   checklist_id?: Prisma.StringFieldUpdateOperationsInput | string
   dttime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   obs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_archived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
 }
 
 export type checklistUncheckedUpdateManyInput = {
@@ -269,6 +287,7 @@ export type checklistUncheckedUpdateManyInput = {
   operator_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dttime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   obs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_archived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
 }
 
 export type checklistCountOrderByAggregateInput = {
@@ -276,6 +295,7 @@ export type checklistCountOrderByAggregateInput = {
   operator_id?: Prisma.SortOrder
   dttime?: Prisma.SortOrder
   obs?: Prisma.SortOrder
+  is_archived?: Prisma.SortOrder
 }
 
 export type checklistMaxOrderByAggregateInput = {
@@ -283,6 +303,7 @@ export type checklistMaxOrderByAggregateInput = {
   operator_id?: Prisma.SortOrder
   dttime?: Prisma.SortOrder
   obs?: Prisma.SortOrder
+  is_archived?: Prisma.SortOrder
 }
 
 export type checklistMinOrderByAggregateInput = {
@@ -290,6 +311,7 @@ export type checklistMinOrderByAggregateInput = {
   operator_id?: Prisma.SortOrder
   dttime?: Prisma.SortOrder
   obs?: Prisma.SortOrder
+  is_archived?: Prisma.SortOrder
 }
 
 export type ChecklistListRelationFilter = {
@@ -317,6 +339,10 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
 
 export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
+}
+
+export type NullableBoolFieldUpdateOperationsInput = {
+  set?: boolean | null
 }
 
 export type checklistCreateNestedManyWithoutUsersInput = {
@@ -379,6 +405,7 @@ export type checklistCreateWithoutUsersInput = {
   checklist_id?: string
   dttime?: Date | string | null
   obs?: string | null
+  is_archived?: boolean | null
   checklist_answer?: Prisma.checklist_answerCreateNestedManyWithoutChecklistInput
 }
 
@@ -386,6 +413,7 @@ export type checklistUncheckedCreateWithoutUsersInput = {
   checklist_id?: string
   dttime?: Date | string | null
   obs?: string | null
+  is_archived?: boolean | null
   checklist_answer?: Prisma.checklist_answerUncheckedCreateNestedManyWithoutChecklistInput
 }
 
@@ -423,12 +451,14 @@ export type checklistScalarWhereInput = {
   operator_id?: Prisma.UuidNullableFilter<"checklist"> | string | null
   dttime?: Prisma.DateTimeNullableFilter<"checklist"> | Date | string | null
   obs?: Prisma.StringNullableFilter<"checklist"> | string | null
+  is_archived?: Prisma.BoolNullableFilter<"checklist"> | boolean | null
 }
 
 export type checklistCreateWithoutChecklist_answerInput = {
   checklist_id?: string
   dttime?: Date | string | null
   obs?: string | null
+  is_archived?: boolean | null
   users?: Prisma.usersCreateNestedOneWithoutChecklistInput
 }
 
@@ -437,6 +467,7 @@ export type checklistUncheckedCreateWithoutChecklist_answerInput = {
   operator_id?: string | null
   dttime?: Date | string | null
   obs?: string | null
+  is_archived?: boolean | null
 }
 
 export type checklistCreateOrConnectWithoutChecklist_answerInput = {
@@ -459,6 +490,7 @@ export type checklistUpdateWithoutChecklist_answerInput = {
   checklist_id?: Prisma.StringFieldUpdateOperationsInput | string
   dttime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   obs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_archived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   users?: Prisma.usersUpdateOneWithoutChecklistNestedInput
 }
 
@@ -467,18 +499,21 @@ export type checklistUncheckedUpdateWithoutChecklist_answerInput = {
   operator_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dttime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   obs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_archived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
 }
 
 export type checklistCreateManyUsersInput = {
   checklist_id?: string
   dttime?: Date | string | null
   obs?: string | null
+  is_archived?: boolean | null
 }
 
 export type checklistUpdateWithoutUsersInput = {
   checklist_id?: Prisma.StringFieldUpdateOperationsInput | string
   dttime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   obs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_archived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   checklist_answer?: Prisma.checklist_answerUpdateManyWithoutChecklistNestedInput
 }
 
@@ -486,6 +521,7 @@ export type checklistUncheckedUpdateWithoutUsersInput = {
   checklist_id?: Prisma.StringFieldUpdateOperationsInput | string
   dttime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   obs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_archived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   checklist_answer?: Prisma.checklist_answerUncheckedUpdateManyWithoutChecklistNestedInput
 }
 
@@ -493,6 +529,7 @@ export type checklistUncheckedUpdateManyWithoutUsersInput = {
   checklist_id?: Prisma.StringFieldUpdateOperationsInput | string
   dttime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   obs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_archived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
 }
 
 
@@ -531,6 +568,7 @@ export type checklistSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   operator_id?: boolean
   dttime?: boolean
   obs?: boolean
+  is_archived?: boolean
   users?: boolean | Prisma.checklist$usersArgs<ExtArgs>
   checklist_answer?: boolean | Prisma.checklist$checklist_answerArgs<ExtArgs>
   _count?: boolean | Prisma.ChecklistCountOutputTypeDefaultArgs<ExtArgs>
@@ -541,6 +579,7 @@ export type checklistSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   operator_id?: boolean
   dttime?: boolean
   obs?: boolean
+  is_archived?: boolean
   users?: boolean | Prisma.checklist$usersArgs<ExtArgs>
 }, ExtArgs["result"]["checklist"]>
 
@@ -549,6 +588,7 @@ export type checklistSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   operator_id?: boolean
   dttime?: boolean
   obs?: boolean
+  is_archived?: boolean
   users?: boolean | Prisma.checklist$usersArgs<ExtArgs>
 }, ExtArgs["result"]["checklist"]>
 
@@ -557,9 +597,10 @@ export type checklistSelectScalar = {
   operator_id?: boolean
   dttime?: boolean
   obs?: boolean
+  is_archived?: boolean
 }
 
-export type checklistOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"checklist_id" | "operator_id" | "dttime" | "obs", ExtArgs["result"]["checklist"]>
+export type checklistOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"checklist_id" | "operator_id" | "dttime" | "obs" | "is_archived", ExtArgs["result"]["checklist"]>
 export type checklistInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.checklist$usersArgs<ExtArgs>
   checklist_answer?: boolean | Prisma.checklist$checklist_answerArgs<ExtArgs>
@@ -583,6 +624,7 @@ export type $checklistPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     operator_id: string | null
     dttime: Date | null
     obs: string | null
+    is_archived: boolean | null
   }, ExtArgs["result"]["checklist"]>
   composites: {}
 }
@@ -1012,6 +1054,7 @@ export interface checklistFieldRefs {
   readonly operator_id: Prisma.FieldRef<"checklist", 'String'>
   readonly dttime: Prisma.FieldRef<"checklist", 'DateTime'>
   readonly obs: Prisma.FieldRef<"checklist", 'String'>
+  readonly is_archived: Prisma.FieldRef<"checklist", 'Boolean'>
 }
     
 
