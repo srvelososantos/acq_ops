@@ -8,7 +8,7 @@
  *
  * 🟢 You can import this file directly.
  */
-import type * as runtime from "@prisma/client/runtime/client"
+import type * as runtime from "@prisma/client/runtime/library"
 import type * as $Enums from "../enums.js"
 import type * as Prisma from "../internal/prismaNamespace.js"
 
@@ -199,7 +199,7 @@ export type QuestionGroupByOutputType = {
   _max: QuestionMaxAggregateOutputType | null
 }
 
-export type GetQuestionGroupByPayload<T extends questionGroupByArgs> = Prisma.PrismaPromise<
+type GetQuestionGroupByPayload<T extends questionGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<QuestionGroupByOutputType, T['by']> &
       {
@@ -1174,11 +1174,6 @@ export type questionFindManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Skip the first `n` questions.
    */
   skip?: number
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
-   * Filter by unique combinations of questions.
-   */
   distinct?: Prisma.QuestionScalarFieldEnum | Prisma.QuestionScalarFieldEnum[]
 }
 

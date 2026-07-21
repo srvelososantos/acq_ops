@@ -8,7 +8,7 @@
  *
  * 🟢 You can import this file directly.
  */
-import type * as runtime from "@prisma/client/runtime/client"
+import type * as runtime from "@prisma/client/runtime/library"
 import type * as $Enums from "../enums.js"
 import type * as Prisma from "../internal/prismaNamespace.js"
 
@@ -137,7 +137,7 @@ export type Checklist_answerGroupByOutputType = {
   _max: Checklist_answerMaxAggregateOutputType | null
 }
 
-export type GetChecklist_answerGroupByPayload<T extends checklist_answerGroupByArgs> = Prisma.PrismaPromise<
+type GetChecklist_answerGroupByPayload<T extends checklist_answerGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<Checklist_answerGroupByOutputType, T['by']> &
       {
@@ -1126,11 +1126,6 @@ export type checklist_answerFindManyArgs<ExtArgs extends runtime.Types.Extension
    * Skip the first `n` checklist_answers.
    */
   skip?: number
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
-   * Filter by unique combinations of checklist_answers.
-   */
   distinct?: Prisma.Checklist_answerScalarFieldEnum | Prisma.Checklist_answerScalarFieldEnum[]
 }
 

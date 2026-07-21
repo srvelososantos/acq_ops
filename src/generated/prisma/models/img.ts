@@ -8,7 +8,7 @@
  *
  * 🟢 You can import this file directly.
  */
-import type * as runtime from "@prisma/client/runtime/client"
+import type * as runtime from "@prisma/client/runtime/library"
 import type * as $Enums from "../enums.js"
 import type * as Prisma from "../internal/prismaNamespace.js"
 
@@ -178,7 +178,7 @@ export type ImgGroupByOutputType = {
   _max: ImgMaxAggregateOutputType | null
 }
 
-export type GetImgGroupByPayload<T extends imgGroupByArgs> = Prisma.PrismaPromise<
+type GetImgGroupByPayload<T extends imgGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ImgGroupByOutputType, T['by']> &
       {
@@ -1077,11 +1077,6 @@ export type imgFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Skip the first `n` imgs.
    */
   skip?: number
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
-   * Filter by unique combinations of imgs.
-   */
   distinct?: Prisma.ImgScalarFieldEnum | Prisma.ImgScalarFieldEnum[]
 }
 

@@ -8,7 +8,7 @@
  *
  * 🟢 You can import this file directly.
  */
-import type * as runtime from "@prisma/client/runtime/client"
+import type * as runtime from "@prisma/client/runtime/library"
 import type * as $Enums from "../enums.js"
 import type * as Prisma from "../internal/prismaNamespace.js"
 
@@ -192,7 +192,7 @@ export type AnswerGroupByOutputType = {
   _max: AnswerMaxAggregateOutputType | null
 }
 
-export type GetAnswerGroupByPayload<T extends answerGroupByArgs> = Prisma.PrismaPromise<
+type GetAnswerGroupByPayload<T extends answerGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<AnswerGroupByOutputType, T['by']> &
       {
@@ -1403,11 +1403,6 @@ export type answerFindManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Skip the first `n` answers.
    */
   skip?: number
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
-   * Filter by unique combinations of answers.
-   */
   distinct?: Prisma.AnswerScalarFieldEnum | Prisma.AnswerScalarFieldEnum[]
 }
 
