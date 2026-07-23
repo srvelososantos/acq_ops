@@ -82,7 +82,7 @@ export class AppController {
   @ApiResponse({ status: 201, description: 'User retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized, user not logged in' })
   @Get('user/:id')
-  // param : https://breathable-delma-claval.ngrok-free.dev/user/744e17d6-8090-428a-a1b8-3f1266e92fcb
+  // param : https://acqops-production.up.railway.app/user/744e17d6-8090-428a-a1b8-3f1266e92fcb
   async getUserById(@Param('id') id: string): Promise<UserModel | null> {
     return this.UserService.user({ usr_id: id });
   }
@@ -115,7 +115,7 @@ export class AppController {
   }
 
   @Get('getquestions')
-  //query : https://breathable-delma-claval.ngrok-free.dev/getquestions?attraction=1
+  //query : https://acqops-production.up.railway.app/getquestions?attraction=1
   async getQuestions(@Query('attraction', ParseIntPipe) attraction: number){
     return await this.QuestionsService.getQuestions(attraction)
   }

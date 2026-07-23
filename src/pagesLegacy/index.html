@@ -398,7 +398,7 @@
 
     setLoading('btn-login', true);
     try {
-      const res = await fetch('https://breathable-delma-claval.ngrok-free.dev/auth/signin', {
+      const res = await fetch('https://acqops-production.up.railway.app/auth/signin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -447,7 +447,7 @@
 
     setLoading('btn-register', true);
     try {
-      const res = await fetch('https://breathable-delma-claval.ngrok-free.dev/auth/signup', {
+      const res = await fetch('https://acqops-production.up.railway.app/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, username, password })

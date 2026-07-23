@@ -196,7 +196,7 @@ async function doLogin(){
 
   btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Verificando...';
   try{
-    const res=await fetch('https://breathable-delma-claval.ngrok-free.dev/auth/signin',{
+    const res=await fetch('https://acqops-production.up.railway.app/auth/signin',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({email,password:pwd})
